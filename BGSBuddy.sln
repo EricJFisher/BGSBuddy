@@ -5,11 +5,13 @@ VisualStudioVersion = 16.0.29926.136
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BGSBuddy", "BGSBuddy\BGSBuddy.csproj", "{3BDEF2BC-6822-45E1-B677-3A68ED9BD784}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Services", "Services\Services.csproj", "{5CC4009A-E4B2-49BE-B7D8-3782AD52CE9A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Services", "Services\Services.csproj", "{5CC4009A-E4B2-49BE-B7D8-3782AD52CE9A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Repositories", "Repositories\Repositories.csproj", "{EF22E1BA-27C1-48EA-A5A5-D7999F36D742}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Repositories", "Repositories\Repositories.csproj", "{EF22E1BA-27C1-48EA-A5A5-D7999F36D742}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BGSBuddyTests", "BGSBuddyTests\BGSBuddyTests.csproj", "{BF55DF49-632D-4399-BA15-0C6EEC6485CA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Entities", "Entities\Entities.csproj", "{D505BD5E-2313-4072-AB7F-A6BB0885BFC9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -111,6 +113,26 @@ Global
 		{BF55DF49-632D-4399-BA15-0C6EEC6485CA}.Release|x64.Build.0 = Release|Any CPU
 		{BF55DF49-632D-4399-BA15-0C6EEC6485CA}.Release|x86.ActiveCfg = Release|Any CPU
 		{BF55DF49-632D-4399-BA15-0C6EEC6485CA}.Release|x86.Build.0 = Release|Any CPU
+		{D505BD5E-2313-4072-AB7F-A6BB0885BFC9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D505BD5E-2313-4072-AB7F-A6BB0885BFC9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D505BD5E-2313-4072-AB7F-A6BB0885BFC9}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{D505BD5E-2313-4072-AB7F-A6BB0885BFC9}.Debug|ARM.Build.0 = Debug|Any CPU
+		{D505BD5E-2313-4072-AB7F-A6BB0885BFC9}.Debug|ARM64.ActiveCfg = Debug|Any CPU
+		{D505BD5E-2313-4072-AB7F-A6BB0885BFC9}.Debug|ARM64.Build.0 = Debug|Any CPU
+		{D505BD5E-2313-4072-AB7F-A6BB0885BFC9}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{D505BD5E-2313-4072-AB7F-A6BB0885BFC9}.Debug|x64.Build.0 = Debug|Any CPU
+		{D505BD5E-2313-4072-AB7F-A6BB0885BFC9}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{D505BD5E-2313-4072-AB7F-A6BB0885BFC9}.Debug|x86.Build.0 = Debug|Any CPU
+		{D505BD5E-2313-4072-AB7F-A6BB0885BFC9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D505BD5E-2313-4072-AB7F-A6BB0885BFC9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D505BD5E-2313-4072-AB7F-A6BB0885BFC9}.Release|ARM.ActiveCfg = Release|Any CPU
+		{D505BD5E-2313-4072-AB7F-A6BB0885BFC9}.Release|ARM.Build.0 = Release|Any CPU
+		{D505BD5E-2313-4072-AB7F-A6BB0885BFC9}.Release|ARM64.ActiveCfg = Release|Any CPU
+		{D505BD5E-2313-4072-AB7F-A6BB0885BFC9}.Release|ARM64.Build.0 = Release|Any CPU
+		{D505BD5E-2313-4072-AB7F-A6BB0885BFC9}.Release|x64.ActiveCfg = Release|Any CPU
+		{D505BD5E-2313-4072-AB7F-A6BB0885BFC9}.Release|x64.Build.0 = Release|Any CPU
+		{D505BD5E-2313-4072-AB7F-A6BB0885BFC9}.Release|x86.ActiveCfg = Release|Any CPU
+		{D505BD5E-2313-4072-AB7F-A6BB0885BFC9}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
