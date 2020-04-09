@@ -7,11 +7,11 @@
   IgnorableNamespaces="uap mp">
 
   <Identity
-    Name="8a599649-0306-4baf-ab56-eae0f9f91ec4"
+    Name="f94a0be6-8269-4c61-9f26-236f1063bb1f"
     Publisher="CN=EricJ"
     Version="1.0.0.0" />
 
-  <mp:PhoneIdentity PhoneProductId="8a599649-0306-4baf-ab56-eae0f9f91ec4" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
+  <mp:PhoneIdentity PhoneProductId="f94a0be6-8269-4c61-9f26-236f1063bb1f" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
   <Properties>
     <DisplayName>BGSBuddy</DisplayName>

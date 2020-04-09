@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-
-using System.Globalization;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-
-namespace Services.QuickType
+using System;
+using System.Collections.Generic;
+namespace Repositories.EliteBgsTypes
 {
-    public partial class EliteBgs
+    public partial class EliteBgsFactionRequest
     {
         [JsonProperty("docs")]
         public List<Doc> Docs { get; set; }
@@ -129,14 +126,14 @@ namespace Services.QuickType
 
     public enum Happiness { FactionHappinessband1, FactionHappinessband2, FactionHappinessband3 };
 
-    public partial class EliteBgs
+    public partial class EliteBgsFactionRequest
     {
-        public static EliteBgs FromJson(string json) => JsonConvert.DeserializeObject<EliteBgs>(json, QuickType.Converter.Settings);
+        public static EliteBgsFactionRequest FromJson(string json) => JsonConvert.DeserializeObject<EliteBgsFactionRequest>(json, QuickType.Converter.Settings);
     }
 
     public static class Serialize
     {
-        public static string ToJson(this EliteBgs self) => JsonConvert.SerializeObject(self, QuickType.Converter.Settings);
+        public static string ToJson(this EliteBgsFactionRequest self) => JsonConvert.SerializeObject(self, QuickType.Converter.Settings);
     }
 
     internal static class Converter
