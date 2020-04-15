@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Entities
+﻿namespace Entities
 {
     public class Asset
     {
         public string Name { get; set; }
-        public virtual SolarSystem SolarSystem { get; set; }
-        public virtual Faction Faction { get; set; }
+        public string SolarSystem { get; set; }
+        public string Faction { get; set; }
     }
 }

@@ -1,0 +1,23 @@
+﻿<Window x:Class="BGSBuddy.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:BGSBuddy"
+        mc:Ignorable="d"
+        Title="BGSBuddy" Height="450" Width="800">
+    <StackPanel Background="#222222">
+        <StackPanel.Resources>
+            <Style TargetType="{x:Type TextBlock}">
+                <Setter Property="Foreground" Value="#FFFFFF"/>
+            </Style>
+        </StackPanel.Resources>
+        <TextBlock Text="Alliance Rapid-Reaction Corps Situation Report" FontSize="24"/>
+        <TextBlock Text="Critical" Background="Red" Foreground="Black" FontSize="16"/>
+        <TextBlock Text="System Name"/>
+        <TextBlock Text="Opportunities" Background="Orange" Foreground="Black" FontSize="16"/>
+        <TextBlock Text="System Name" />
+        <TextBlock Text="Asset Reallocation" Background="Green" FontSize="16" />
+        <TextBlock Text="System Name" />
+    </StackPanel>
+</Window>
