@@ -1,4 +1,5 @@
-﻿using Entities;
+﻿using BGSBuddy.ViewModels;
+using Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,39 +22,64 @@ namespace BGSBuddy
     /// </summary>
     public partial class MainWindow : Window
     {
-        private Faction faction;
+        public List<Report> CriticalReports = new List<Report>();
+        public List<Report> WarningReports = new List<Report>();
+        public List<Report> OpportunityReports = new List<Report>();
+        public List<Report> ControlledReports = new List<Report>();
 
         public MainWindow()
         {
             InitializeComponent();
-            faction = GetTestData();
+            GetSituations();
         }
 
-        private Faction GetTestData()
+        private async Task GetSituations()
         {
-            return new Faction {
-                Name = "Alliance Rapid-Reaction Corps",
-                UpdatedOn = DateTime.UtcNow,
-                SolarSystems = new List<SolarSystem>
+            var repository = new Repositories.EliteBgsRepository(new Repositories.FileSystemRepository());
+            var faction = await repository.GetFaction("Alliance Rapid-reaction Corps");
+
+            foreach(var system in faction.SolarSystems)
+            {
+                if (system.ControllingFaction.Equals("Alliance Rapid-reaction Corps",StringComparison.OrdinalIgnoreCase))
                 {
-                    new SolarSystem
+                    var report = new Report();
+                    report.Location = system.Name;
+                    // Critical
+                    if(!String.IsNullOrEmpty(system.ConflictType))
                     {
-                        Name = "TestA",
-                        UpdatedOn = DateTime.UtcNow,
-                        ConflictStatus = string.Empty,
-                        ConflictType = string.Empty,
-                        ControllingFaction = "Alliance Rapid-Reaction Corps",
-                        Assets = new List<Asset>
-                        {
-                            new Asset
-                            {
-                                Name = "StationOne",
-                                SolarSystem = "TestA",
-                                Faction = "Alliance Rapid-Reaction Corps"
-                            }
-                        }
+                        report.Situation = system.ConflictType;
+                        report.Condition = system.ConflictStatus;
+                        CriticalReports.Add(report);
                     }
+                    
+                    if(system.Assets.Any(e => e.Faction.ToLower() != "alliance rapid-reaction corps"))
+                    {
+                        report.Situation = "Asset Reallocation Opportunity";
+                        report.Condition = system.Assets.FirstOrDefault(e => e.Faction.ToLower() != "alliance rapid-reaction corps").Name;
+                        OpportunityReports.Add(report);
+                        report.Condition = "Assets unclaimed";
+                    }
+                    else
+                    {
+                        report.Condition = "Total control";
+                    }
+                    report.Situation = string.Empty;
+                    ControlledReports.Add(report);
                 }
+            }
+
+            CriticalGrid.DataContext = CriticalReports;
+            WarningGrid.DataContext = WarningReports;
+            OpportunitiesGrid.DataContext = OpportunityReports;
+            ControlledGrid.DataContext = ControlledReports;
+        }
+
+        private List<Report> GetTestData()
+        {
+            return new List<Report> 
+            {
+                new Report{ Location = "SystemOne", Condition = "Active", Situation = "War" },
+                new Report{ Location = "SystemTwo", Condition = "Active", Situation = "Election" }
             };
         }
     }

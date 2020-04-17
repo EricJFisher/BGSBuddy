@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BGSBuddy"
+        xmlns:src="clr-namespace:Entities;assembly=Entities"
         mc:Ignorable="d"
         Title="BGSBuddy" Height="450" Width="800">
     <StackPanel Background="#222222">
@@ -14,10 +15,16 @@
         </StackPanel.Resources>
         <TextBlock Text="Alliance Rapid-Reaction Corps Situation Report" FontSize="24"/>
         <TextBlock Text="Critical" Background="Red" Foreground="Black" FontSize="16"/>
-        <TextBlock Text="System Name"/>
-        <TextBlock Text="Opportunities" Background="Orange" Foreground="Black" FontSize="16"/>
-        <TextBlock Text="System Name" />
-        <TextBlock Text="Asset Reallocation" Background="Green" FontSize="16" />
-        <TextBlock Text="System Name" />
+        <DataGrid x:Name="CriticalGrid" ItemsSource="{Binding}" AutoGenerateColumns="True">
+        </DataGrid>
+        <TextBlock Text="Warning" Background="Orange" Foreground="Black" FontSize="16"/>
+        <DataGrid x:Name="WarningGrid" ItemsSource="{Binding}" AutoGenerateColumns="True">
+        </DataGrid>
+        <TextBlock Text="Opportunities" Background="DeepSkyBlue" Foreground="Black" FontSize="16"/>
+        <DataGrid x:Name="OpportunitiesGrid" ItemsSource="{Binding}" AutoGenerateColumns="True">
+        </DataGrid>
+        <TextBlock Text="Controlled Systems" Background="Green" FontSize="16" />
+        <DataGrid x:Name="ControlledGrid" ItemsSource="{Binding}" AutoGenerateColumns="True">
+        </DataGrid>
     </StackPanel>
 </Window>

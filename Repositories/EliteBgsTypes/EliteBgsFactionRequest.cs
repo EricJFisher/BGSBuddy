@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 
-namespace Repositories.EliteBgsTypes
+namespace Repositories.EliteBgsTypes.FactionRequest
 {
     public partial class EliteBgsFactionRequest
     {

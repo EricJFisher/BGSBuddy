@@ -10,7 +10,7 @@ namespace Repositories
 
         public FileSystemRepository()
         {
-            logPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + Path.DirectorySeparatorChar + "BGSBuddy" + Path.DirectorySeparatorChar; ;
+            logPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + Path.DirectorySeparatorChar + "BGSBuddy" + Path.DirectorySeparatorChar;
             if (!Directory.Exists(logPath))
                 Directory.CreateDirectory(logPath);
         }
@@ -22,7 +22,10 @@ namespace Repositories
 
         public async Task<string> RetrieveJsonFromFile(string fileName)
         {
-            return File.ReadAllText(fileName);
+            if (File.Exists(fileName))
+                return File.ReadAllText(fileName);
+            else
+                return string.Empty;
         }
     }
 }
