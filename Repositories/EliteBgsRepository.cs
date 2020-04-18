@@ -1,7 +1,8 @@
 ﻿using Entities;
+using Repositories.EliteBgsTypes;
 using Repositories.EliteBgsTypes.FactionRequest;
 using Repositories.EliteBgsTypes.SystemRequest;
-using System.Linq;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Faction = Entities.Faction;
@@ -39,6 +40,15 @@ namespace Repositories
             return await ConvertJsonToSystem(json);
         }
 
+        public async Task<List<Asset>> GetStations(string systemName)
+        {
+            var file = "A" + systemName + ".log";
+            var json = await _fileSystemRepository.RetrieveJsonFromFile(file);
+            if (string.IsNullOrEmpty(json))
+                json = await FetchStation(systemName);
+            return await ConvertJsonToStations(json);
+        }
+
         public async Task<string> FetchFaction(string name)
         {
             var file = "F" + name + ".log";
@@ -66,8 +76,10 @@ namespace Repositories
                     solarSystem.ConflictStatus = system.Conflicts[0].Status;
                 }
 
-                solarSystem.ControllingFaction = (await GetSystem(system.SystemName).ConfigureAwait(false)).ControllingFaction;
+                var systemRequest = await GetSystem(system.SystemName).ConfigureAwait(false);
 
+                solarSystem.ControllingFaction = systemRequest.ControllingFaction;
+                solarSystem.Assets = systemRequest.Assets;
                 faction.SolarSystems.Add(solarSystem);
             }
 
@@ -81,8 +93,26 @@ namespace Repositories
             var request = EliteBgsSystemRequest.FromJson(json);
             system.Name = request.Docs[0].Name;
             system.ControllingFaction = request.Docs[0].ControllingMinorFaction;
+            system.Assets = await GetStations(system.Name);
 
             return system;
+        }
+
+        private async Task<List<Asset>> ConvertJsonToStations(string json)
+        {
+            var assets = new List<Asset>();
+
+            var request = EliteBgsStationRequest.FromJson(json);
+            foreach(var item in request.Docs)
+            {
+                var asset = new Asset();
+                asset.Name = item.Name;
+                asset.SolarSystem = item.System;
+                asset.Faction = item.ControllingMinorFaction;
+                assets.Add(asset);
+            }
+
+            return assets;
         }
 
         public async Task<string> FetchSystem(string name)
@@ -96,7 +126,7 @@ namespace Repositories
 
         public async Task<string> FetchStation(string systemName)
         {
-            var file = "A" + name + ".log";
+            var file = "A" + systemName + ".log";
             var url = baseUrl + "stations?system=" + systemName;
             var response = await client.GetStringAsync(url).ConfigureAwait(false);
             await _fileSystemRepository.SaveJsonToFile(response, file);

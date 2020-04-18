@@ -54,9 +54,11 @@ namespace BGSBuddy
                     
                     if(system.Assets.Any(e => e.Faction.ToLower() != "alliance rapid-reaction corps"))
                     {
-                        report.Situation = "Asset Reallocation Opportunity";
-                        report.Condition = system.Assets.FirstOrDefault(e => e.Faction.ToLower() != "alliance rapid-reaction corps").Name;
-                        OpportunityReports.Add(report);
+                        var opportunityReport = new Report();
+                        opportunityReport.Location = system.Name;
+                        opportunityReport.Situation = "Asset Reallocation Opportunity";
+                        opportunityReport.Condition = system.Assets.FirstOrDefault(e => e.Faction.ToLower() != "alliance rapid-reaction corps").Faction;
+                        OpportunityReports.Add(opportunityReport);
                         report.Condition = "Assets unclaimed";
                     }
                     else
