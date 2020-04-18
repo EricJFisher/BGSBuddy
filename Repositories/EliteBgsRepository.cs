@@ -13,11 +13,13 @@ namespace Repositories
     {
         private readonly string baseUrl = "https://elitebgs.app/api/ebgs/v4/";
         private HttpClient client = new HttpClient();
+        private EddbRepository _eddbRepository;
         private FileSystemRepository _fileSystemRepository;
 
-        public EliteBgsRepository(FileSystemRepository fileSystemRepository)
+        public EliteBgsRepository()
         {
-            _fileSystemRepository = fileSystemRepository;
+            _eddbRepository = new EddbRepository();
+            _fileSystemRepository = new FileSystemRepository();
         }
 
         public async Task<Faction> GetFaction(string name)
@@ -76,10 +78,12 @@ namespace Repositories
                     solarSystem.ConflictStatus = system.Conflicts[0].Status;
                 }
 
-                var systemRequest = await GetSystem(system.SystemName).ConfigureAwait(false);
+                var stationRequest = await GetSystem(system.SystemName).ConfigureAwait(false);
+                var systemRequest = await _eddbRepository.GetSystem(system.SystemName).ConfigureAwait(false);
 
                 solarSystem.ControllingFaction = systemRequest.ControllingFaction;
-                solarSystem.Assets = systemRequest.Assets;
+                solarSystem.Assets = stationRequest.Assets;
+                solarSystem.SubFactions = systemRequest.SubFactions;
                 faction.SolarSystems.Add(solarSystem);
             }
 

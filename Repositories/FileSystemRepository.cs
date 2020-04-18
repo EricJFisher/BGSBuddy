@@ -17,13 +17,13 @@ namespace Repositories
 
         public async Task SaveJsonToFile(string json, string fileName)
         {
-            File.WriteAllText(fileName, json);
+            File.WriteAllText(logPath + fileName, json);
         }
 
         public async Task<string> RetrieveJsonFromFile(string fileName)
         {
-            if (File.Exists(fileName))
-                return File.ReadAllText(fileName);
+            if (File.Exists(logPath + fileName))
+                return File.ReadAllText(logPath + fileName);
             else
                 return string.Empty;
         }

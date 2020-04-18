@@ -11,5 +11,6 @@ namespace Entities
         public string ConflictType { get; set; }
         public string ControllingFaction { get; set; }
         public List<Asset> Assets { get; set; } = new List<Asset>();
+        public List<SubFaction> SubFactions { get; set; } = new List<SubFaction>();
     }
 }
