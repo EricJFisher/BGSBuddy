@@ -37,9 +37,14 @@ namespace BGSBuddy
         {
             var repository = new Repositories.EliteBgsRepository(new Repositories.FileSystemRepository());
             var faction = await repository.GetFaction("Alliance Rapid-reaction Corps");
+            var offLimits = new List<string> { "Biria", "Bruthanvan", "CD-45 7854", "Colando Po", "HIP 61097", "Kebes", "LTT 5058", "Mulukang", "Orerve", "Quator", "Reorte", "Tiveronisa", "Virawn", "Xucuri" };
 
             foreach(var system in faction.SolarSystems)
             {
+                // do not include anything off limits
+                if (offLimits.Any(e => e.ToLower() == system.Name.ToLower()))
+                    continue;
+
                 if (system.ControllingFaction.Equals("Alliance Rapid-reaction Corps",StringComparison.OrdinalIgnoreCase))
                 {
                     var report = new Report();
@@ -67,6 +72,13 @@ namespace BGSBuddy
                     }
                     report.Situation = string.Empty;
                     ControlledReports.Add(report);
+                }
+                else
+                {
+                    var opportunityReport = new Report();
+                    opportunityReport.Location = system.Name;
+                    opportunityReport.Situation = "Conquest Opportunity";
+                    OpportunityReports.Add(opportunityReport);
                 }
             }
 
