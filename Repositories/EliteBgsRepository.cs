@@ -1,7 +1,10 @@
 ﻿using Entities;
 using Repositories.EliteBgsTypes;
 using Repositories.EliteBgsTypes.FactionRequest;
+using Repositories.EliteBgsTypes.StationRequest;
 using Repositories.EliteBgsTypes.SystemRequest;
+using Repositories.EliteBgsTypes.TickRequest;
+using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -15,6 +18,7 @@ namespace Repositories
         private HttpClient client = new HttpClient();
         private EddbRepository _eddbRepository;
         private FileSystemRepository _fileSystemRepository;
+        private DateTime lastTick = DateTime.UtcNow;
 
         public EliteBgsRepository()
         {
@@ -22,31 +26,36 @@ namespace Repositories
             _fileSystemRepository = new FileSystemRepository();
         }
 
-        public async Task<Faction> GetFaction(string name)
+        public async Task<Faction> GetFaction(string name, bool forceUpdate = false)
         {
+            lastTick = await GetTick();
             var file = "F" + name + ".log";
             var json = await _fileSystemRepository.RetrieveJsonFromFile(file).ConfigureAwait(false);
             if(string.IsNullOrEmpty(json))
-            {
                 json = await FetchFaction(name).ConfigureAwait(false);
-            }
-            return await ConvertJsonToFaction(json).ConfigureAwait(false);
+            var faction = await ConvertJsonToFaction(json).ConfigureAwait(false);
+            if (faction.UpdatedOn < lastTick && !forceUpdate)
+                faction = await GetFaction(name, true).ConfigureAwait(false);
+            return faction;
         }
 
-        public async Task<SolarSystem> GetSystem(string name)
+        public async Task<SolarSystem> GetSystem(string name, bool forceUpdate = false)
         {
             var file = "S" + name + ".log";
-            var json = await _fileSystemRepository.RetrieveJsonFromFile(file);
-            if (string.IsNullOrEmpty(json))
+            var json = await _fileSystemRepository.RetrieveJsonFromFile(file).ConfigureAwait(false);
+            if (string.IsNullOrEmpty(json) || forceUpdate)
                 json = await FetchSystem(name);
-            return await ConvertJsonToSystem(json);
+            var system = await ConvertJsonToSystem(json);
+            if (system.UpdatedOn < lastTick && !forceUpdate)
+                system = await GetSystem(name, true).ConfigureAwait(false);
+            return system;
         }
 
-        public async Task<List<Asset>> GetStations(string systemName)
+        public async Task<List<Asset>> GetStations(string systemName, bool forceUpdate = false)
         {
             var file = "A" + systemName + ".log";
-            var json = await _fileSystemRepository.RetrieveJsonFromFile(file);
-            if (string.IsNullOrEmpty(json))
+            var json = await _fileSystemRepository.RetrieveJsonFromFile(file).ConfigureAwait(false);
+            if (string.IsNullOrEmpty(json) || forceUpdate)
                 json = await FetchStation(systemName);
             return await ConvertJsonToStations(json);
         }
@@ -72,6 +81,7 @@ namespace Repositories
             {
                 var solarSystem = new SolarSystem();
                 solarSystem.Name = system.SystemName;
+                solarSystem.UpdatedOn = system.UpdatedAt.UtcDateTime;
                 if (system.Conflicts.Count > 0)
                 {
                     solarSystem.ConflictType = system.Conflicts[0].Type;
@@ -86,7 +96,6 @@ namespace Repositories
                 solarSystem.SubFactions = systemRequest.SubFactions;
                 faction.SolarSystems.Add(solarSystem);
             }
-
             return faction;
         }
 
@@ -97,8 +106,8 @@ namespace Repositories
             var request = EliteBgsSystemRequest.FromJson(json);
             system.Name = request.Docs[0].Name;
             system.ControllingFaction = request.Docs[0].ControllingMinorFaction;
+            system.UpdatedOn = request.Docs[0].UpdatedAt.UtcDateTime;
             system.Assets = await GetStations(system.Name);
-
             return system;
         }
 
@@ -115,7 +124,6 @@ namespace Repositories
                 asset.Faction = item.ControllingMinorFaction;
                 assets.Add(asset);
             }
-
             return assets;
         }
 
@@ -135,6 +143,24 @@ namespace Repositories
             var response = await client.GetStringAsync(url).ConfigureAwait(false);
             await _fileSystemRepository.SaveJsonToFile(response, file);
             return response;
+        }
+
+        private async Task<DateTime> ConvertJsonToTick(string json)
+        {
+            var request = EliteBgsTickRequest.FromJson(json);
+            return request[0].Time.UtcDateTime;            
+        }
+
+        public async Task<DateTime> GetTick()
+        {
+            var json = await FetchTick();
+            return await ConvertJsonToTick(json);
+        }
+
+        public async Task<string> FetchTick()
+        {
+            var url = baseUrl + "ticks";
+            return await client.GetStringAsync(url).ConfigureAwait(false);
         }
     }
 }

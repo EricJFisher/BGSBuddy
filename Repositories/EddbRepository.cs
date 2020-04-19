@@ -21,18 +21,16 @@ namespace Repositories
 
         public async Task<SolarSystem> GetSystem(string name)
         {
-            var file = "S" + name + ".log";
+            var file = "SI" + name + ".log";
             var json = await _fileSystemRepository.RetrieveJsonFromFile(file);
             if (string.IsNullOrEmpty(json))
-            {
                 json = await FetchSystem(name).ConfigureAwait(false);
-            }
             return await ConvertJsonToSystem(json).ConfigureAwait(false);
         }
 
         public async Task<string> FetchSystem(string name)
         {
-            var file = "S" + name + ".log";
+            var file = "SI" + name + ".log";
             var url = baseUrl + "populatedsystems?name=" + name;
             var response = await client.GetStringAsync(url).ConfigureAwait(false);
             await _fileSystemRepository.SaveJsonToFile(response, file);

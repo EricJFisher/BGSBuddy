@@ -46,7 +46,18 @@ namespace BGSBuddy
                     continue;
 
                 var influences = system.SubFactions.OrderByDescending(e => e.Influence).Select(e => e.Influence).ToList();
-                
+
+                if (system.UpdatedOn <= DateTime.UtcNow.AddDays(-1))
+                {
+                    var warningReport = new Report
+                    {
+                        Location = system.Name,
+                        Situation = "Stale Data",
+                        Condition = "Over " + (DateTime.UtcNow - system.UpdatedOn).Days.ToString() + " days old"
+                    };
+                    WarningReports.Add(warningReport);
+                }
+
                 if (system.ControllingFaction.Equals("Alliance Rapid-reaction Corps",StringComparison.OrdinalIgnoreCase))
                 {
                     var report = new Report();
@@ -109,13 +120,9 @@ namespace BGSBuddy
             ControlledGrid.DataContext = ControlledReports;
         }
 
-        private List<Report> GetTestData()
+        private void RefreshButton_Click(object sender, RoutedEventArgs e)
         {
-            return new List<Report> 
-            {
-                new Report{ Location = "SystemOne", Condition = "Active", Situation = "War" },
-                new Report{ Location = "SystemTwo", Condition = "Active", Situation = "Election" }
-            };
+            GetSituations();
         }
     }
 }

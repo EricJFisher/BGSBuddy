@@ -5,7 +5,7 @@ using System.Globalization;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
-namespace Repositories.EliteBgsTypes
+namespace Repositories.EliteBgsTypes.StationRequest
 {
     public partial class EliteBgsStationRequest
     {
