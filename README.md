@@ -17,6 +17,7 @@ BGS buddy is a simple application for generating an Elite Dangerous Back Ground 
  - All systems currently controlled by your minor player faction
  
 ## FAQ
+ - I just pushed "Refresh" but nothing happened? I am using both EliteBGS and EDDB.IO for data sources which means sometimes what you see on the website is different than in the tool. Often the websites will show data before it's available through the API (Especially when dealing with EDDB), if it doesn't change after quite some time put an issue with details and I'll investigate.'
  - How do I update the off limits systems? It's hard coded so you can't yet, I'll add that later.
  - How do I use this? Open it, and it'll do the rest, press Update if you want to manually trigger an update. (it updates automatically when you open the application)
  - Do you accept pull requests? Yes, submit it and as long as it's desirable functionality (from my perspective, sorry) I'll check it out and bring it in!
