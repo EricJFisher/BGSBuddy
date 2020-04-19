@@ -104,6 +104,17 @@ namespace BGSBuddy
                 }
                 else
                 {
+                    if(!string.IsNullOrEmpty(system.ConflictType))
+                    {
+                        var criticalReport = new Report
+                        {
+                            Location = system.Name,
+                            Situation = system.ConflictType,
+                            Condition = system.ConflictStatus
+                        };
+                        CriticalReports.Add(criticalReport);
+                    }
+
                     var opportunityReport = new Report
                     {
                         Location = system.Name,
