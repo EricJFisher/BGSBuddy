@@ -1,5 +1,4 @@
 ﻿using Entities;
-using Repositories.EliteBgsTypes;
 using Repositories.EliteBgsTypes.FactionRequest;
 using Repositories.EliteBgsTypes.StationRequest;
 using Repositories.EliteBgsTypes.SystemRequest;
