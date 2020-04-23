@@ -26,7 +26,7 @@ namespace BGSBuddy
 
         private async Task GetSituations()
         {
-            RefreshButton.Content = "Updatinging, Please Wait";
+            RefreshButton.Content = "Updating, Please Wait";
             var repository = new Repositories.EliteBgsRepository();
             lastTick = await repository.GetTick();
             var faction = await repository.GetFaction("Alliance Rapid-reaction Corps", lastTick);
