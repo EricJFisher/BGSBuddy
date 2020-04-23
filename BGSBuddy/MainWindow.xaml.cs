@@ -16,6 +16,7 @@ namespace BGSBuddy
         public List<Report> WarningReports = new List<Report>();
         public List<Report> OpportunityReports = new List<Report>();
         public List<Report> ControlledReports = new List<Report>();
+        private DateTime lastTick;
 
         public MainWindow()
         {
@@ -25,105 +26,76 @@ namespace BGSBuddy
 
         private async Task GetSituations()
         {
+            RefreshButton.Content = "Updatinging, Please Wait";
             var repository = new Repositories.EliteBgsRepository();
-            var faction = await repository.GetFaction("Alliance Rapid-reaction Corps");
+            lastTick = await repository.GetTick();
+            var faction = await repository.GetFaction("Alliance Rapid-reaction Corps", lastTick);
             var offLimits = new List<string> { "Biria", "Bruthanvan", "CD-45 7854", "Colando Po", "HIP 61097", "Kebes", "LTT 5058", "Mulukang", "Orerve", "Quator", "Reorte", "Tiveronisa", "Virawn", "Xucuri", "Tionisla" };
+
+            CriticalReports.Clear();
+            WarningReports.Clear();
+            OpportunityReports.Clear();
+            ControlledReports.Clear();
 
             foreach(var system in faction.SolarSystems)
             {
-                // do not include anything off limits
                 if (offLimits.Any(e => e.ToLower() == system.Name.ToLower()))
                     continue;
 
                 var influences = system.SubFactions.OrderByDescending(e => e.Influence).Select(e => e.Influence).ToList();
 
-                if (system.UpdatedOn <= DateTime.UtcNow.AddDays(-1))
-                {
-                    var warningReport = new Report
-                    {
-                        Location = system.Name,
-                        Situation = "Stale Data",
-                        Condition = "Over " + (DateTime.UtcNow - system.UpdatedOn).Days.ToString() + " days old"
-                    };
-                    WarningReports.Add(warningReport);
-                }
+                bool weControl = false;
+                bool totalControl = true;
+                bool closeToConflict = false;
 
-                if (system.ControllingFaction.Equals("Alliance Rapid-reaction Corps",StringComparison.OrdinalIgnoreCase))
-                {
-                    var report = new Report();
-                    report.Location = system.Name;
-                    // Critical
-                    if(!String.IsNullOrEmpty(system.ConflictType))
-                    {
-                        report.Situation = system.ConflictType;
-                        report.Condition = system.ConflictStatus;
-                        CriticalReports.Add(report);
-                    }
+                if (system.ControllingFaction.Equals("Alliance Rapid-reaction Corps", StringComparison.OrdinalIgnoreCase))
+                    weControl = true;
+                if (influences[0] - 10 <= influences[1])
+                    closeToConflict = true;
+                if (system.Assets.Any(e => e.Faction.ToLower() != "alliance rapid-reaction corps"))
+                    totalControl = false;
 
-                    if (system.Assets.Any(e => e.Faction.ToLower() != "alliance rapid-reaction corps"))
-                    {
-                        if (influences[0] - 10 <= influences[1])
-                        {
-                            var opportunityReport = new Report
-                            {
-                                Location = system.Name,
-                                Situation = "Asset Reallocation Opportunity",
-                                Condition = system.Assets.FirstOrDefault(e => e.Faction.ToLower() != "alliance rapid-reaction corps").Faction
-                            };
-                            OpportunityReports.Add(opportunityReport);
-                        }
-                        report.Condition = "Assets unclaimed";
-                    }
-                    else
-                    {
-                        if (influences[0] - 10 <= influences[1])
-                        {
-                            var warningReport = new Report
-                            {
-                                Location = system.Name,
-                                Situation = "Pointless Conflict Risk",
-                                Condition = "inf gap : " + Math.Round(influences[0] - influences[1],2)
-                            };
-                            WarningReports.Add(warningReport);
-                        }
+                // Stale Data
+                if (system.UpdatedOn <= DateTime.UtcNow.AddDays(-2))
+                    WarningReports.Add(new Report(system.Name, "Stale Data", "Over " + (DateTime.UtcNow - system.UpdatedOn).Days.ToString() + " days old"));
 
-                        report.Condition = "Total control";
-                    }
-                    report.Situation = string.Empty;
-                    ControlledReports.Add(report);
-                }
+                // In or Pending Conflict
+                if (!String.IsNullOrEmpty(system.ConflictType) && !String.IsNullOrEmpty(system.ConflictStatus))
+                    CriticalReports.Add(new Report(system.Name, system.ConflictType, system.ConflictStatus));
+                
+                // Asset Reallocation opportunity
+                if (!totalControl && closeToConflict)
+                    OpportunityReports.Add(new Report(system.Name, "Asset Reallocation Opportunity", system.Assets.FirstOrDefault(e => e.Faction.ToLower() != "alliance rapid-reaction corps").Faction));
+                // Pointless conflict risk
+                else if(closeToConflict)
+                    WarningReports.Add(new Report(system.Name,"Pointless Conflict Risk","inf gap : " + Math.Round(influences[0] - influences[1], 2)));
+                
+                // Total Control
+                if (totalControl)
+                    ControlledReports.Add(new Report(system.Name, "Total Control", system.Assets.Count + " assets controlled."));
+                // Unclaimed Assets
                 else
-                {
-                    if(!string.IsNullOrEmpty(system.ConflictType))
-                    {
-                        var criticalReport = new Report
-                        {
-                            Location = system.Name,
-                            Situation = system.ConflictType,
-                            Condition = system.ConflictStatus
-                        };
-                        CriticalReports.Add(criticalReport);
-                    }
+                    ControlledReports.Add(new Report(system.Name, "Unclamed Assets", system.Assets.Count + " assets unclaimed."));
 
-                    var opportunityReport = new Report
-                    {
-                        Location = system.Name,
-                        Situation = "Conquest Opportunity",
-                        Condition = "inf gap : " + Math.Round(influences[0] - influences[1], 2)
-                    };
-                    OpportunityReports.Add(opportunityReport);
-                }
+                // Conquest opportunity
+                if (!weControl)
+                    OpportunityReports.Add(new Report(system.Name, "Conquest Opportunity", "inf gap : " + Math.Round(influences[0] - influences[1], 2)));
             }
 
             CriticalGrid.DataContext = CriticalReports;
+            CriticalGrid.Items.Refresh();
             WarningGrid.DataContext = WarningReports;
+            WarningGrid.Items.Refresh();
             OpportunitiesGrid.DataContext = OpportunityReports;
+            OpportunitiesGrid.Items.Refresh();
             ControlledGrid.DataContext = ControlledReports;
+            ControlledGrid.Items.Refresh();
+            RefreshButton.Content = "Refresh";
         }
 
-        private void RefreshButton_Click(object sender, RoutedEventArgs e)
+        private async void RefreshButton_Click(object sender, RoutedEventArgs e)
         {
-            GetSituations();
+            await GetSituations();
         }
     }
 }

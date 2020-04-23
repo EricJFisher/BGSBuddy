@@ -1,5 +1,6 @@
 ﻿using Entities;
 using Repositories.EddbRequestTypes;
+using System;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -16,13 +17,16 @@ namespace Repositories
             _fileSystemRepository = new FileSystemRepository();
         }
 
-        public async Task<SolarSystem> GetSystem(string name)
+        public async Task<SolarSystem> GetSystem(string name, DateTime lastTick, bool forceUpdate = false)
         {
             var file = "SI" + name + ".log";
             var json = await _fileSystemRepository.RetrieveJsonFromFile(file);
-            if (string.IsNullOrEmpty(json))
+            if (string.IsNullOrEmpty(json) || forceUpdate)
                 json = await FetchSystem(name).ConfigureAwait(false);
-            return await ConvertJsonToSystem(json).ConfigureAwait(false);
+            var system = await ConvertJsonToSystem(json).ConfigureAwait(false);
+            if (system.UpdatedOn < DateTime.UtcNow && !forceUpdate)
+                system = await GetSystem(name, lastTick, true);
+            return system;
         }
 
         public async Task<string> FetchSystem(string name)

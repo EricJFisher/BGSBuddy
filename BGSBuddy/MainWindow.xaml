@@ -14,7 +14,7 @@
             </Style>
         </StackPanel.Resources>
         <TextBlock Text="Alliance Rapid-Reaction Corps Situation Report" FontSize="24"/>
-        <Button Click="RefreshButton_Click">Refresh</Button>
+        <Button x:Name="RefreshButton" Click="RefreshButton_Click">Refresh</Button>
         <TextBlock Text="Critical" Background="Red" Foreground="Black" FontSize="16"/>
         <DataGrid x:Name="CriticalGrid" ItemsSource="{Binding}" AutoGenerateColumns="True">
         </DataGrid>
