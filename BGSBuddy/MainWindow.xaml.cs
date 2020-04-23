@@ -1,4 +1,5 @@
 ﻿using BGSBuddy.ViewModels;
+using Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,20 +18,28 @@ namespace BGSBuddy
         public List<Report> OpportunityReports = new List<Report>();
         public List<Report> ControlledReports = new List<Report>();
         private DateTime lastTick;
+        private string myFaction;
+        private List<string> offLimits;
 
         public MainWindow()
         {
             InitializeComponent();
+            GetSettings();
             GetSituations();
+        }
+
+        private void GetSettings()
+        {
+            myFaction = Properties.Settings.Default.Faction;
+            offLimits = Properties.Settings.Default.OffLimits.Split(',').ToList();
         }
 
         private async Task GetSituations()
         {
             RefreshButton.Content = "Updating, Please Wait";
-            var repository = new Repositories.EliteBgsRepository();
+            var repository = new EliteBgsRepository();
             lastTick = await repository.GetTick();
-            var faction = await repository.GetFaction("Alliance Rapid-reaction Corps", lastTick);
-            var offLimits = new List<string> { "Biria", "Bruthanvan", "CD-45 7854", "Colando Po", "HIP 61097", "Kebes", "LTT 5058", "Mulukang", "Orerve", "Quator", "Reorte", "Tiveronisa", "Virawn", "Xucuri", "Tionisla" };
+            var faction = await repository.GetFaction(myFaction, lastTick);
 
             CriticalReports.Clear();
             WarningReports.Clear();
@@ -48,11 +57,11 @@ namespace BGSBuddy
                 bool totalControl = true;
                 bool closeToConflict = false;
 
-                if (system.ControllingFaction.Equals("Alliance Rapid-reaction Corps", StringComparison.OrdinalIgnoreCase))
+                if (system.ControllingFaction.Equals(myFaction, StringComparison.OrdinalIgnoreCase))
                     weControl = true;
                 if (influences[0] - 10 <= influences[1])
                     closeToConflict = true;
-                if (system.Assets.Any(e => e.Faction.ToLower() != "alliance rapid-reaction corps"))
+                if (system.Assets.Any(e => e.Faction.ToLower() != myFaction))
                     totalControl = false;
 
                 // Stale Data
@@ -65,7 +74,7 @@ namespace BGSBuddy
                 
                 // Asset Reallocation opportunity
                 if (!totalControl && closeToConflict)
-                    OpportunityReports.Add(new Report(system.Name, "Asset Reallocation Opportunity", system.Assets.FirstOrDefault(e => e.Faction.ToLower() != "alliance rapid-reaction corps").Faction));
+                    OpportunityReports.Add(new Report(system.Name, "Asset Reallocation Opportunity", system.Assets.FirstOrDefault(e => e.Faction.ToLower() != myFaction.ToLower()).Faction));
                 // Pointless conflict risk
                 else if(closeToConflict)
                     WarningReports.Add(new Report(system.Name,"Pointless Conflict Risk","inf gap : " + Math.Round(influences[0] - influences[1], 2)));

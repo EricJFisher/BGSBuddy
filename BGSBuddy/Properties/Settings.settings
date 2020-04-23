@@ -1,0 +1,12 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="BGSBuddy.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="Faction" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Alliance Rapid-reaction Corps</Value>
+    </Setting>
+    <Setting Name="OffLimits" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Biria,Bruthanvan,CD-45 7854,Colando Po,HIP 61097,Kebes,LTT 5058,Mulukang,Orerve,Quator,Reorte,Tiveronisa,Virawn,Xucuri,Tionisla</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>
