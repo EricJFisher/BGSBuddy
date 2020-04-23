@@ -24,19 +24,27 @@ namespace BGSBuddy
         public MainWindow()
         {
             InitializeComponent();
-            GetSettings();
             GetSituations();
         }
 
         private void GetSettings()
         {
             myFaction = Properties.Settings.Default.Faction;
-            offLimits = Properties.Settings.Default.OffLimits.Split(',').ToList();
+            offLimits = Properties.Settings.Default.OffLimits?.Split(',')?.ToList();
         }
 
         private async Task GetSituations()
         {
             RefreshButton.Content = "Updating, Please Wait";
+            GetSettings();
+            ReportTitle.Text = myFaction + " Situation Report";
+            if (String.IsNullOrEmpty(myFaction))
+            {
+                var popup = new Settings();
+                popup.ShowDialog();
+                RefreshButton.Content = "Refresh";
+            }
+
             var repository = new EliteBgsRepository();
             lastTick = await repository.GetTick();
             var faction = await repository.GetFaction(myFaction, lastTick);
@@ -105,6 +113,12 @@ namespace BGSBuddy
         private async void RefreshButton_Click(object sender, RoutedEventArgs e)
         {
             await GetSituations();
+        }
+
+        private void SettingsButton_Click(object sender, RoutedEventArgs e)
+        {
+            var popup = new Settings();
+            popup.ShowDialog();
         }
     }
 }

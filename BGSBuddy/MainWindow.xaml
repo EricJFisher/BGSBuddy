@@ -13,7 +13,8 @@
                 <Setter Property="Foreground" Value="#FFFFFF"/>
             </Style>
         </StackPanel.Resources>
-        <TextBlock Text="Alliance Rapid-Reaction Corps Situation Report" FontSize="24"/>
+        <TextBlock x:Name="ReportTitle" Text="Alliance Rapid-Reaction Corps Situation Report" FontSize="24"/>
+        <Button x:Name="SettingsButton" Click="SettingsButton_Click">Settings</Button>
         <Button x:Name="RefreshButton" Click="RefreshButton_Click">Refresh</Button>
         <TextBlock Text="Critical" Background="Red" Foreground="Black" FontSize="16"/>
         <DataGrid x:Name="CriticalGrid" ItemsSource="{Binding}" AutoGenerateColumns="True">

@@ -71,6 +71,8 @@ namespace Repositories
             var faction = new Faction();
 
             var request = EliteBgsFactionRequest.FromJson(json);
+            if (request.Docs.Count == 0)
+                return faction;
             faction.Name = request.Docs[0].Name;
             faction.UpdatedOn = request.Docs[0].UpdatedAt.UtcDateTime;
             

@@ -1,0 +1,22 @@
+﻿<Window x:Class="BGSBuddy.Settings"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:BGSBuddy"
+        mc:Ignorable="d"
+        Title="Settings" Height="450" Width="800">
+    <StackPanel>
+        <StackPanel.Resources>
+            <Style TargetType="{x:Type Label}">
+                <Setter Property="Foreground" Value="#FFFFFF"/>
+                <Setter Property="Background" Value="#444444"/>
+            </Style>
+        </StackPanel.Resources>
+        <Label>Faction Name:</Label>
+        <TextBox x:Name="FactionName" />
+        <Label>Offlimits list: (note: these should be comma seperated with no spaces before or after them)</Label>
+        <TextBox x:Name="OffLimits" />
+        <Button x:Name="SaveButton" Click="SaveButton_Click">Save and Close</Button>
+    </StackPanel>
+</Window>
