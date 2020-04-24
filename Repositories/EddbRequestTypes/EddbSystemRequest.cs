@@ -160,7 +160,7 @@
         public string NameLower { get; set; }
     }
 
-    public enum Allegiance { Alliance, Empire, Federation, Independent };
+    public enum Allegiance { Alliance, Empire, Federation, Independent, PilotsFederation, Unknown };
 
     public enum Security { Low, Medium, High };
 
@@ -210,6 +210,10 @@
                     return Allegiance.Federation;
                 case "independent":
                     return Allegiance.Independent;
+                case "pilots federation":
+                    return Allegiance.PilotsFederation;
+                default:
+                    return Allegiance.Unknown;
             }
             throw new Exception("Cannot unmarshal type Allegiance");
         }
@@ -299,6 +303,8 @@
                     return SimbadRef.Hip61097;
                 case "ltt 5058":
                     return SimbadRef.Ltt5058;
+                default:
+                    return SimbadRef.Empty;
             }
             throw new Exception("Cannot unmarshal type SimbadRef");
         }

@@ -3,10 +3,10 @@
   <Profiles />
   <Settings>
     <Setting Name="Faction" Type="System.String" Scope="User">
-      <Value Profile="(Default)">Alliance Rapid-reaction Corps</Value>
+      <Value Profile="(Default)">The Dark Wheel</Value>
     </Setting>
     <Setting Name="OffLimits" Type="System.String" Scope="User">
-      <Value Profile="(Default)">Biria,Bruthanvan,CD-45 7854,Colando Po,HIP 61097,Kebes,LTT 5058,Mulukang,Orerve,Quator,Reorte,Tiveronisa,Virawn,Xucuri,Tionisla</Value>
+      <Value Profile="(Default)">Sol,Lave,Brestla</Value>
     </Setting>
   </Settings>
 </SettingsFile>

@@ -25,7 +25,7 @@ namespace BGSBuddy.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Alliance Rapid-reaction Corps")]
+        [global::System.Configuration.DefaultSettingValueAttribute("The Dark Wheel")]
         public string Faction {
             get {
                 return ((string)(this["Faction"]));
@@ -37,8 +37,7 @@ namespace BGSBuddy.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Biria,Bruthanvan,CD-45 7854,Colando Po,HIP 61097,Kebes,LTT 5058,Mulukang,Orerve,Q" +
-            "uator,Reorte,Tiveronisa,Virawn,Xucuri,Tionisla")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Sol,Lave,Brestla")]
         public string OffLimits {
             get {
                 return ((string)(this["OffLimits"]));
