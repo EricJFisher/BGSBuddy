@@ -69,7 +69,7 @@ namespace BGSBuddy
                     weControl = true;
                 if (influences[0] - 10 <= influences[1])
                     closeToConflict = true;
-                if (system.Assets.Any(e => e.Faction.ToLower() != myFaction))
+                if (system.Assets.Any(e => e.Faction.ToLower() != myFaction.ToLower()))
                     totalControl = false;
 
                 // Stale Data
