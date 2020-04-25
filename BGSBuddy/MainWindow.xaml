@@ -7,13 +7,19 @@
         xmlns:src="clr-namespace:Entities;assembly=Entities"
         mc:Ignorable="d"
         Title="BGSBuddy" Height="450" Width="800">
-    <StackPanel Background="#222222">
+    <StackPanel x:Name="MainPanel"  Background="#222222">
         <StackPanel.Resources>
             <Style TargetType="{x:Type TextBlock}">
                 <Setter Property="Foreground" Value="#FFFFFF"/>
             </Style>
         </StackPanel.Resources>
         <TextBlock x:Name="ReportTitle" Text="Alliance Rapid-Reaction Corps Situation Report" FontSize="24"/>
+        <TextBlock x:Name="UpdateNotification" HorizontalAlignment="Center" Background="Yellow" Foreground="Black" FontSize="24" Padding="5" Visibility="Collapsed">
+            Update Available:  
+            <Hyperlink NavigateUri="https://github.com/EricJFisher/BGSBuddy/releases/latest" RequestNavigate="Hyperlink_RequestNavigate">
+                Click here to view release details in your browser
+            </Hyperlink>
+        </TextBlock>
         <Button x:Name="SettingsButton" Click="SettingsButton_Click">Settings</Button>
         <Button x:Name="RefreshButton" Click="RefreshButton_Click">Refresh</Button>
         <TextBlock Text="Critical" Background="Red" Foreground="Black" FontSize="16"/>

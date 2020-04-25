@@ -2,7 +2,9 @@
 using Repositories;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -24,6 +26,7 @@ namespace BGSBuddy
         public MainWindow()
         {
             InitializeComponent();
+            CheckForUpdates();
             GetSituations();
         }
 
@@ -31,6 +34,17 @@ namespace BGSBuddy
         {
             myFaction = Properties.Settings.Default.Faction;
             offLimits = Properties.Settings.Default.OffLimits?.Split(',')?.ToList();
+        }
+
+        private void CheckForUpdates()
+        {
+            var version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+            var updates = GithubRepository.HasUpdates(version).Result;
+            if(updates)
+            {
+                UpdateNotification.Visibility = Visibility.Visible;
+                UpdateNotification.UpdateLayout();
+            }
         }
 
         private async Task GetSituations()
@@ -119,6 +133,12 @@ namespace BGSBuddy
         {
             var popup = new Settings();
             popup.ShowDialog();
+        }
+
+        private void Hyperlink_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
+        {
+            Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri){ UseShellExecute = true });
+            e.Handled = true;
         }
     }
 }
