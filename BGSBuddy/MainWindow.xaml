@@ -34,5 +34,8 @@
         <TextBlock Text="Controlled Systems" Background="Green" FontSize="16" />
         <DataGrid x:Name="ControlledGrid" ItemsSource="{Binding}" AutoGenerateColumns="True">
         </DataGrid>
+        <TextBlock Text="Partially Controlled Systems" Background="Tan" Foreground="Black" FontSize="16" />
+        <DataGrid x:Name="PartialGrid" ItemsSource="{Binding}" AutoGenerateColumns="True">
+        </DataGrid>
     </StackPanel>
 </Window>

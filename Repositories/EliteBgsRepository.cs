@@ -80,7 +80,6 @@ namespace Repositories
             {
                 var solarSystem = new SolarSystem();
                 solarSystem.Name = system.SystemName;
-                solarSystem.UpdatedOn = system.UpdatedAt.UtcDateTime;
                 if (system.Conflicts.Count > 0)
                 {
                     solarSystem.ConflictType = system.Conflicts[0].Type;
@@ -93,6 +92,7 @@ namespace Repositories
                 solarSystem.ControllingFaction = systemRequest.ControllingFaction;
                 solarSystem.Assets = stationRequest.Assets;
                 solarSystem.SubFactions = systemRequest.SubFactions;
+                solarSystem.UpdatedOn = stationRequest.UpdatedOn;
                 faction.SolarSystems.Add(solarSystem);
             }
             return faction;

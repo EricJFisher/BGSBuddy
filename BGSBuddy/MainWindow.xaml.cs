@@ -19,6 +19,7 @@ namespace BGSBuddy
         public List<Report> WarningReports = new List<Report>();
         public List<Report> OpportunityReports = new List<Report>();
         public List<Report> ControlledReports = new List<Report>();
+        public List<Report> PartialReports = new List<Report>();
         private DateTime lastTick;
         private string myFaction;
         private List<string> offLimits;
@@ -67,6 +68,7 @@ namespace BGSBuddy
             WarningReports.Clear();
             OpportunityReports.Clear();
             ControlledReports.Clear();
+            PartialReports.Clear();
 
             foreach(var system in faction.SolarSystems)
             {
@@ -98,7 +100,7 @@ namespace BGSBuddy
                 if (!totalControl && closeToConflict)
                     OpportunityReports.Add(new Report(system.Name, "Asset Reallocation Opportunity", system.Assets.FirstOrDefault(e => e.Faction.ToLower() != myFaction.ToLower()).Faction));
                 // Pointless conflict risk
-                else if(closeToConflict)
+                else if(closeToConflict && string.IsNullOrEmpty(system.ConflictType))
                     WarningReports.Add(new Report(system.Name,"Pointless Conflict Risk","inf gap : " + Math.Round(influences[0] - influences[1], 2)));
                 
                 // Total Control
@@ -106,7 +108,7 @@ namespace BGSBuddy
                     ControlledReports.Add(new Report(system.Name, "Total Control", system.Assets.Count + " assets controlled."));
                 // Unclaimed Assets
                 else
-                    ControlledReports.Add(new Report(system.Name, "Unclamed Assets", system.Assets.Count + " assets unclaimed."));
+                    PartialReports.Add(new Report(system.Name, "Unclamed Assets", system.Assets.Count(e => e.Faction.ToLower() != myFaction.ToLower()) + " of " + system.Assets.Count + " assets unclaimed."));
 
                 // Conquest opportunity
                 if (!weControl)
@@ -121,6 +123,8 @@ namespace BGSBuddy
             OpportunitiesGrid.Items.Refresh();
             ControlledGrid.DataContext = ControlledReports;
             ControlledGrid.Items.Refresh();
+            PartialGrid.DataContext = PartialReports;
+            PartialGrid.Items.Refresh();
             RefreshButton.Content = "Refresh";
         }
 

@@ -45,6 +45,7 @@ namespace Repositories
             var request = EddbSystemRequest.FromJson(json);
             system.Name = request.Docs[0].Name;
             system.ControllingFaction = request.Docs[0].ControllingMinorFaction;
+            system.UpdatedOn = request.Docs[0].UpdatedAt.UtcDateTime;
             foreach(var faction in request.Docs[0].MinorFactionPresences)
             {
                 var subFaction = new SubFaction();
