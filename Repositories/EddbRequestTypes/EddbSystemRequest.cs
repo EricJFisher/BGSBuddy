@@ -162,9 +162,9 @@
 
     public enum Allegiance { Alliance, Empire, Federation, Independent, PilotsFederation, Unknown };
 
-    public enum Security { Low, Medium, High };
+    public enum Security { Anarchy, Low, Medium, High, Unknown };
 
-    public enum SimbadRef { Cd457854, Empty, Hip61097, Ltt5058 };
+    public enum SimbadRef { Cd457854, Empty, Hip61097, Ltt5058, Unknown };
 
     public partial class EddbSystemRequest
     {
@@ -251,6 +251,8 @@
             var value = serializer.Deserialize<string>(reader);
             switch (value)
             {
+                case "anarchy":
+                    return Security.Anarchy;
                 case "low":
                 case "$system_security_low;":
                     return Security.Low;
@@ -258,6 +260,8 @@
                     return Security.Medium;
                 case "high":
                     return Security.High;
+                default:
+                    return Security.Unknown;
             }
             throw new Exception("Cannot unmarshal type Security");
         }
@@ -304,7 +308,7 @@
                 case "ltt 5058":
                     return SimbadRef.Ltt5058;
                 default:
-                    return SimbadRef.Empty;
+                    return SimbadRef.Unknown;
             }
             throw new Exception("Cannot unmarshal type SimbadRef");
         }
