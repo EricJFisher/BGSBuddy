@@ -4,17 +4,22 @@ BGS buddy is a simple application for generating an Elite Dangerous Back Ground 
 
 ## Critical Reports
  - Systems where you are at risk of losing control of the system due to conflict
+ - Systems where you are in retreat
 
 ## Warning Reports
  - Systems where you're in danger of triggering conflict that won't gain you any assets
  - Systems where data is stale (over 24 hours out of date)
  
 ## Opportunity Reports
- - Systems where you are near a conflict that can gain you a new asset
+ - Systems where you are near a conflict that can gain you a new asset (within 10% influence)
  - Systems that aren't on your "off limits" list that you aren't the controlling faction
- 
+ - Systems where another faction is in retreat
+
 ## Controlled Systems
- - All systems currently controlled by your minor player faction
+ - Systems you control including all assets present in that system
+
+## Partially Controlled Systems
+ - Systems you are the controlling faction, but do not control all assets in the system
  
 ## FAQ
  - It seems to take quite a while to update the report, what gives? I am leveraging both the EliteBGS API and the EDDB API, unfortunately I have no control over these third party services so when generating the report it's not as simple as making a call and parsing the data... Assuming data is at least older than the last tick there is 1 call for the faction info, a second call to get when the most recent tick happened, then 2 calls for every system who's information is older than the most recent tick. This can be A LOT of calls. I'm hoping EliteBGS stream lines this into a singular call later, but at this time we're stuck waiting on every single one of these calls completing... which can take upwards of 30 seconds.
