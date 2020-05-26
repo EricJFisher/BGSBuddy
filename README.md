@@ -4,6 +4,7 @@ BGS buddy is a simple application for generating an Elite Dangerous Back Ground 
 
 ## Critical Reports
  - Systems where you are at risk of losing control of the system due to conflict
+ - Systems where you are in retreat
 
 ## Warning Reports
  - Systems where you're in danger of triggering conflict that won't gain you any assets
@@ -12,6 +13,7 @@ BGS buddy is a simple application for generating an Elite Dangerous Back Ground 
 ## Opportunity Reports
  - Systems where you are near a conflict that can gain you a new asset
  - Systems that aren't on your "off limits" list that you aren't the controlling faction
+ - Systems where another faction is in retreat
  
 ## Controlled Systems
  - All systems currently controlled by your minor player faction
