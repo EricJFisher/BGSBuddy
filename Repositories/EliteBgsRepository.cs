@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
+using System.Web;
 using Faction = Entities.Faction;
 
 namespace Repositories
@@ -60,7 +61,7 @@ namespace Repositories
         public async Task<string> FetchFaction(string name)
         {
             var file = "F" + name + ".log";
-            var url = baseUrl + "factions?name=" + name;
+            var url = baseUrl + "factions?name=" + HttpUtility.UrlEncode(name);
             var response = await client.GetStringAsync(url).ConfigureAwait(false);
             await _fileSystemRepository.SaveJsonToFile(response, file);
             return response;
@@ -132,7 +133,7 @@ namespace Repositories
         public async Task<string> FetchSystem(string name)
         {
             var file = "S" + name + ".log";
-            var url = baseUrl + "systems?name=" + name;
+            var url = baseUrl + "systems?name=" + HttpUtility.UrlEncode(name);
             var response = await client.GetStringAsync(url).ConfigureAwait(false);
             await _fileSystemRepository.SaveJsonToFile(response, file);
             return response;
@@ -141,7 +142,7 @@ namespace Repositories
         public async Task<string> FetchStation(string systemName)
         {
             var file = "A" + systemName + ".log";
-            var url = baseUrl + "stations?system=" + systemName;
+            var url = baseUrl + "stations?system=" + HttpUtility.UrlEncode(systemName);
             var response = await client.GetStringAsync(url).ConfigureAwait(false);
             await _fileSystemRepository.SaveJsonToFile(response, file);
             return response;

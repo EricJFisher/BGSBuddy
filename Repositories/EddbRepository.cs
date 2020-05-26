@@ -3,6 +3,7 @@ using Repositories.EddbRequestTypes;
 using System;
 using System.Net.Http;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace Repositories
 {
@@ -32,7 +33,7 @@ namespace Repositories
         public async Task<string> FetchSystem(string name)
         {
             var file = "SI" + name + ".log";
-            var url = baseUrl + "populatedsystems?name=" + name;
+            var url = baseUrl + "populatedsystems?name=" + HttpUtility.UrlEncode(name);
             var response = await client.GetStringAsync(url).ConfigureAwait(false);
             await _fileSystemRepository.SaveJsonToFile(response, file);
             return response;
