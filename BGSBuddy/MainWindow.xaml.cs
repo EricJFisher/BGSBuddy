@@ -1,4 +1,5 @@
 ﻿using BGSBuddy.ViewModels;
+using Entities;
 using Repositories;
 using System;
 using System.Collections.Generic;
@@ -33,8 +34,19 @@ namespace BGSBuddy
 
         private void GetSettings()
         {
-            myFaction = Properties.Settings.Default.Faction;
-            offLimits = Properties.Settings.Default.OffLimits?.Split(',')?.ToList();
+            var repository = new FileSystemRepository();
+            var json = repository.RetrieveJsonFromFile("Settings.txt").Result;
+            if (!string.IsNullOrEmpty(json))
+            {
+                var settings = Newtonsoft.Json.JsonConvert.DeserializeObject<UserSettings>(json);
+                myFaction = settings.FactionName;
+                offLimits = settings.OffLimitsList?.Split(',')?.ToList();
+            }
+            else
+            {
+                myFaction = Properties.Settings.Default.Faction;
+                offLimits = Properties.Settings.Default.OffLimits?.Split(',')?.ToList();
+            }
         }
 
         private void CheckForUpdates()

@@ -1,5 +1,9 @@
-﻿using System;
+﻿using Entities;
+using Newtonsoft.Json;
+using Repositories;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -26,6 +30,14 @@ namespace BGSBuddy
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
+            var repository = new FileSystemRepository();
+            var settings = new UserSettings();
+            settings.FactionName = FactionName.Text;
+            settings.OffLimitsList = OffLimits.Text;
+
+            var json = JsonConvert.SerializeObject(settings);
+            repository.SaveJsonToFile(json, "Settings.txt").Wait();
+
             Properties.Settings.Default.Faction = FactionName.Text;
             Properties.Settings.Default.OffLimits = OffLimits.Text;
             Properties.Settings.Default.Save();
