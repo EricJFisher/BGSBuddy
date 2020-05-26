@@ -46,11 +46,23 @@ namespace Repositories
             system.Name = request.Docs[0].Name;
             system.ControllingFaction = request.Docs[0].ControllingMinorFaction;
             system.UpdatedOn = request.Docs[0].UpdatedAt.UtcDateTime;
+            foreach(var state in request.Docs[0].States)
+            {
+                system.States.Add(state.Name);
+            }
             foreach(var faction in request.Docs[0].MinorFactionPresences)
             {
                 var subFaction = new SubFaction();
                 subFaction.Name = faction.Id;
                 subFaction.Influence = faction.Influence;
+                foreach(var state in faction.ActiveStates)
+                {
+                    subFaction.ActiveStates.Add(state.Name);
+                }
+                foreach(var state in faction.PendingStates)
+                {
+                    subFaction.PendingStates.Add(state.Name);
+                }
                 system.SubFactions.Add(subFaction);
             }
 

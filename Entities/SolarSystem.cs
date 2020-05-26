@@ -10,6 +10,7 @@ namespace Entities
         public string ConflictStatus { get; set; }
         public string ConflictType { get; set; }
         public string ControllingFaction { get; set; }
+        public List<string> States { get; set; } = new List<string>();
         public List<Asset> Assets { get; set; } = new List<Asset>();
         public List<SubFaction> SubFactions { get; set; } = new List<SubFaction>();
     }

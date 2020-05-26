@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -91,7 +92,8 @@ namespace BGSBuddy
 
                 bool weControl = false;
                 bool totalControl = true;
-                bool closeToConflict = false;
+                bool closeToConflict = false; 
+                string states = string.Empty;
 
                 if (system.ControllingFaction.Equals(myFaction, StringComparison.OrdinalIgnoreCase))
                     weControl = true;
@@ -99,32 +101,47 @@ namespace BGSBuddy
                     closeToConflict = true;
                 if (system.Assets.Any(e => e.Faction.ToLower() != myFaction.ToLower()))
                     totalControl = false;
+                if (system.States != null)
+                    states = string.Join(",", system.States);
 
                 // Stale Data
                 if (system.UpdatedOn <= DateTime.UtcNow.AddDays(-2))
-                    WarningReports.Add(new Report(system.Name, "Stale Data", "Over " + (DateTime.UtcNow - system.UpdatedOn).Days.ToString() + " days old"));
+                    WarningReports.Add(new Report(system.Name, "Stale Data", "Over " + (DateTime.UtcNow - system.UpdatedOn).Days.ToString() + " days old", states));
 
                 // In or Pending Conflict
                 if (!String.IsNullOrEmpty(system.ConflictType) && !String.IsNullOrEmpty(system.ConflictStatus))
-                    CriticalReports.Add(new Report(system.Name, system.ConflictType, system.ConflictStatus));
-                
+                    CriticalReports.Add(new Report(system.Name, system.ConflictType, system.ConflictStatus, states));
+               
                 // Asset Reallocation opportunity
                 if (!totalControl && closeToConflict)
-                    OpportunityReports.Add(new Report(system.Name, "Asset Reallocation Opportunity", system.Assets.FirstOrDefault(e => e.Faction.ToLower() != myFaction.ToLower()).Faction));
+                    OpportunityReports.Add(new Report(system.Name, "Asset Reallocation Opportunity", system.Assets.FirstOrDefault(e => e.Faction.ToLower() != myFaction.ToLower()).Faction, states));
+                
                 // Pointless conflict risk
                 else if(closeToConflict && string.IsNullOrEmpty(system.ConflictType))
-                    WarningReports.Add(new Report(system.Name,"Pointless Conflict Risk","inf gap : " + Math.Round(influences[0] - influences[1], 2)));
+                    WarningReports.Add(new Report(system.Name,"Pointless Conflict Risk","inf gap : " + Math.Round(influences[0] - influences[1], 2), states));
                 
                 // Total Control
                 if (totalControl)
-                    ControlledReports.Add(new Report(system.Name, "Total Control", system.Assets.Count + " assets controlled."));
+                    ControlledReports.Add(new Report(system.Name, "Total Control", system.Assets.Count + " assets controlled.", states));
                 // Unclaimed Assets
                 else
-                    PartialReports.Add(new Report(system.Name, "Unclamed Assets", system.Assets.Count(e => e.Faction.ToLower() != myFaction.ToLower()) + " of " + system.Assets.Count + " assets unclaimed."));
+                    PartialReports.Add(new Report(system.Name, "Unclamed Assets", system.Assets.Count(e => e.Faction.ToLower() != myFaction.ToLower()) + " of " + system.Assets.Count + " assets unclaimed.", states));
 
                 // Conquest opportunity
                 if (!weControl)
-                    OpportunityReports.Add(new Report(system.Name, "Conquest Opportunity", "inf gap : " + Math.Round(influences[0] - influences[1], 2)));
+                    OpportunityReports.Add(new Report(system.Name, "Conquest Opportunity", "inf gap : " + Math.Round(influences[0] - influences[1], 2), states));
+
+                // Subfaction considerations
+                foreach(var subFaction in system.SubFactions)
+                {
+                    // We're in retreat
+                    if (subFaction.Name == faction.Name && subFaction.ActiveStates.Exists(e => e == "Retreat"))
+                        CriticalReports.Add(new Report(system.Name, "Retreat", "We're in retreat!!!", states));
+                    
+                    // Other faction is in retreat
+                    if (subFaction.Name != faction.Name && subFaction.ActiveStates.Exists(e => e == "Retreat"))
+                        OpportunityReports.Add(new Report(system.Name, "Retreat Opportunity", "Other minor faction is in retreat.", states));
+                }
             }
 
             CriticalGrid.DataContext = CriticalReports;

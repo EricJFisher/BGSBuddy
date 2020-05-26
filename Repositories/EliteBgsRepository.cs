@@ -91,6 +91,7 @@ namespace Repositories
 
                 solarSystem.ControllingFaction = systemRequest.ControllingFaction;
                 solarSystem.Assets = stationRequest.Assets;
+                solarSystem.States = systemRequest.States;
                 solarSystem.SubFactions = systemRequest.SubFactions;
                 solarSystem.UpdatedOn = stationRequest.UpdatedOn;
                 faction.SolarSystems.Add(solarSystem);
@@ -106,6 +107,8 @@ namespace Repositories
             system.Name = request.Docs[0].Name;
             system.ControllingFaction = request.Docs[0].ControllingMinorFaction;
             system.UpdatedOn = request.Docs[0].UpdatedAt.UtcDateTime;
+            if(string.IsNullOrEmpty(request.Docs[0].State))
+                system.States.Add(request.Docs[0].State);
             system.Assets = await GetStations(system.Name);
             return system;
         }
