@@ -8,9 +8,13 @@ namespace Repositories
         public static async Task<bool> HasUpdates(string currentVersion)
         {
             var baseUrl = @"https://api.github.com/repos/EricJFisher/BGSBuddy/releases/latest";
-            var client = new HttpClient();
-            client.DefaultRequestHeaders.UserAgent.TryParseAdd("request");
-            var response = await client.GetStringAsync(baseUrl).ConfigureAwait(false);
+
+            string response = string.Empty;
+            using (var client = new HttpClient())
+            {
+                client.DefaultRequestHeaders.UserAgent.TryParseAdd("request");
+                response = await client.GetStringAsync(baseUrl).ConfigureAwait(false);
+            }
             return !response.Contains(currentVersion);
         }
     }

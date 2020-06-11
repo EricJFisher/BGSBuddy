@@ -1,11 +1,11 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Interfaces\Interfaces.csproj" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
   </ItemGroup>
 
 </Project>

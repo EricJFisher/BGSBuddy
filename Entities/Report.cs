@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Windows.Documents;
-
-namespace BGSBuddy.ViewModels
+﻿namespace Entities
 {
     public class Report
     {

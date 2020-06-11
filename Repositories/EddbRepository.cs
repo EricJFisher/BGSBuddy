@@ -21,10 +21,10 @@ namespace Repositories
         public async Task<SolarSystem> GetSystem(string name, DateTime lastTick, bool forceUpdate = false)
         {
             var file = "SI" + name + ".log";
-            var json = await _fileSystemRepository.RetrieveJsonFromFile(file);
+            var json = _fileSystemRepository.RetrieveJsonFromFile(file);
             if (string.IsNullOrEmpty(json) || forceUpdate)
                 json = await FetchSystem(name).ConfigureAwait(false);
-            var system = await ConvertJsonToSystem(json).ConfigureAwait(false);
+            var system = ConvertJsonToSystem(json);
             if (system.UpdatedOn < DateTime.UtcNow && !forceUpdate)
                 system = await GetSystem(name, lastTick, true);
             return system;
@@ -35,11 +35,11 @@ namespace Repositories
             var file = "SI" + name + ".log";
             var url = baseUrl + "populatedsystems?name=" + HttpUtility.UrlEncode(name);
             var response = await client.GetStringAsync(url).ConfigureAwait(false);
-            await _fileSystemRepository.SaveJsonToFile(response, file);
+            _fileSystemRepository.SaveJsonToFile(response, file);
             return response;
         }
 
-        private async Task<SolarSystem> ConvertJsonToSystem(string json)
+        private SolarSystem ConvertJsonToSystem(string json)
         {
             var system = new SolarSystem();
 
@@ -47,20 +47,20 @@ namespace Repositories
             system.Name = request.Docs[0].Name;
             system.ControllingFaction = request.Docs[0].ControllingMinorFaction;
             system.UpdatedOn = request.Docs[0].UpdatedAt.UtcDateTime;
-            foreach(var state in request.Docs[0].States)
+            foreach (var state in request.Docs[0].States)
             {
                 system.States.Add(state.Name);
             }
-            foreach(var faction in request.Docs[0].MinorFactionPresences)
+            foreach (var faction in request.Docs[0].MinorFactionPresences)
             {
                 var subFaction = new SubFaction();
                 subFaction.Name = faction.Id;
                 subFaction.Influence = faction.Influence;
-                foreach(var state in faction.ActiveStates)
+                foreach (var state in faction.ActiveStates)
                 {
                     subFaction.ActiveStates.Add(state.Name);
                 }
-                foreach(var state in faction.PendingStates)
+                foreach (var state in faction.PendingStates)
                 {
                     subFaction.PendingStates.Add(state.Name);
                 }

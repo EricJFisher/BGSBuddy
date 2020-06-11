@@ -1,9 +1,11 @@
 ﻿using Entities;
+using Interfaces.Repositories;
 using Newtonsoft.Json;
 using Repositories;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -21,26 +23,32 @@ namespace BGSBuddy
     /// </summary>
     public partial class Settings : Window
     {
+        private IFileSystemRepository fileSystemRepository = new FileSystemRepository();
+
         public Settings()
         {
             InitializeComponent();
-            FactionName.Text = Properties.Settings.Default.Faction;
-            OffLimits.Text = Properties.Settings.Default.OffLimits;
-        }
-
-        private void SaveButton_Click(object sender, RoutedEventArgs e)
-        {
-            var repository = new FileSystemRepository();
-            var settings = new UserSettings();
-            settings.FactionName = FactionName.Text;
-            settings.OffLimitsList = OffLimits.Text;
-
-            var json = JsonConvert.SerializeObject(settings);
-            repository.SaveJsonToFile(json, "Settings.txt").Wait();
+            var settings = new UserSettings(fileSystemRepository);
+            settings.Load().Wait();
+            FactionName.Text = settings.FactionName;
+            OffLimits.Text = string.Join(",", settings.OffLimits);
 
             Properties.Settings.Default.Faction = FactionName.Text;
             Properties.Settings.Default.OffLimits = OffLimits.Text;
             Properties.Settings.Default.Save();
+        }
+
+        private void SaveButton_Click(object sender, RoutedEventArgs e)
+        {
+            var settings = new UserSettings(fileSystemRepository);
+            settings.FactionName = FactionName.Text;
+            settings.OffLimits = OffLimits.Text.Split(',').ToList();
+            settings.Save().Wait();
+
+            Properties.Settings.Default.Faction = FactionName.Text;
+            Properties.Settings.Default.OffLimits = OffLimits.Text;
+            Properties.Settings.Default.Save();
+
             this.Close();
         }
     }

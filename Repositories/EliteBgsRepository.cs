@@ -28,7 +28,7 @@ namespace Repositories
         public async Task<Faction> GetFaction(string name, DateTime lastTick, bool forceUpdate = false)
         {
             var file = "F" + name + ".log";
-            var json = await _fileSystemRepository.RetrieveJsonFromFile(file).ConfigureAwait(false);
+            var json = _fileSystemRepository.RetrieveJsonFromFile(file);
             if(string.IsNullOrEmpty(json) || forceUpdate)
                 json = await FetchFaction(name).ConfigureAwait(false);
             var faction = await ConvertJsonToFaction(json, lastTick).ConfigureAwait(false);
@@ -40,7 +40,7 @@ namespace Repositories
         public async Task<SolarSystem> GetSystem(string name, DateTime lastTick, bool forceUpdate = false)
         {
             var file = "S" + name + ".log";
-            var json = await _fileSystemRepository.RetrieveJsonFromFile(file).ConfigureAwait(false);
+            var json = _fileSystemRepository.RetrieveJsonFromFile(file);
             if (string.IsNullOrEmpty(json) || forceUpdate)
                 json = await FetchSystem(name);
             var system = await ConvertJsonToSystem(json);
@@ -52,10 +52,10 @@ namespace Repositories
         public async Task<List<Asset>> GetStations(string systemName, bool forceUpdate = false)
         {
             var file = "A" + systemName + ".log";
-            var json = await _fileSystemRepository.RetrieveJsonFromFile(file).ConfigureAwait(false);
+            var json = _fileSystemRepository.RetrieveJsonFromFile(file);
             if (string.IsNullOrEmpty(json) || forceUpdate)
                 json = await FetchStation(systemName);
-            return await ConvertJsonToStations(json);
+            return ConvertJsonToStations(json);
         }
 
         public async Task<string> FetchFaction(string name)
@@ -63,7 +63,7 @@ namespace Repositories
             var file = "F" + name + ".log";
             var url = baseUrl + "factions?name=" + HttpUtility.UrlEncode(name);
             var response = await client.GetStringAsync(url).ConfigureAwait(false);
-            await _fileSystemRepository.SaveJsonToFile(response, file);
+            _fileSystemRepository.SaveJsonToFile(response, file);
             return response;
         }
 
@@ -114,12 +114,12 @@ namespace Repositories
             return system;
         }
 
-        private async Task<List<Asset>> ConvertJsonToStations(string json)
+        private List<Asset> ConvertJsonToStations(string json)
         {
             var assets = new List<Asset>();
 
             var request = EliteBgsStationRequest.FromJson(json);
-            foreach(var item in request.Docs)
+            foreach (var item in request.Docs)
             {
                 var asset = new Asset();
                 asset.Name = item.Name;
@@ -135,7 +135,7 @@ namespace Repositories
             var file = "S" + name + ".log";
             var url = baseUrl + "systems?name=" + HttpUtility.UrlEncode(name);
             var response = await client.GetStringAsync(url).ConfigureAwait(false);
-            await _fileSystemRepository.SaveJsonToFile(response, file);
+            _fileSystemRepository.SaveJsonToFile(response, file);
             return response;
         }
 
@@ -144,20 +144,20 @@ namespace Repositories
             var file = "A" + systemName + ".log";
             var url = baseUrl + "stations?system=" + HttpUtility.UrlEncode(systemName);
             var response = await client.GetStringAsync(url).ConfigureAwait(false);
-            await _fileSystemRepository.SaveJsonToFile(response, file);
+            _fileSystemRepository.SaveJsonToFile(response, file);
             return response;
         }
 
-        private async Task<DateTime> ConvertJsonToTick(string json)
+        private DateTime ConvertJsonToTick(string json)
         {
             var request = EliteBgsTickRequest.FromJson(json);
-            return request[0].Time.UtcDateTime;            
+            return request[0].Time.UtcDateTime;
         }
 
         public async Task<DateTime> GetTick()
         {
             var json = await FetchTick();
-            return await ConvertJsonToTick(json);
+            return ConvertJsonToTick(json);
         }
 
         public async Task<string> FetchTick()

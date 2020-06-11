@@ -5,11 +5,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="DotNetZip" Version="1.13.8" />
+    <PackageReference Include="NetMQ" Version="4.0.0.207" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Entities\Entities.csproj" />
+    <ProjectReference Include="..\Interfaces\Interfaces.csproj" />
   </ItemGroup>
 
   <ItemGroup>
