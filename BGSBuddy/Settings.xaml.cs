@@ -1,7 +1,9 @@
 ﻿using Entities;
 using Interfaces.Repositories;
+using Interfaces.Services;
 using Newtonsoft.Json;
 using Repositories;
+using Services;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -23,13 +25,17 @@ namespace BGSBuddy
     /// </summary>
     public partial class Settings : Window
     {
-        private IFileSystemRepository fileSystemRepository = new FileSystemRepository();
+        private IFileSystemRepository fileSystemRepository;
+        private IUserSettingsService userSettingsService;
 
         public Settings()
         {
             InitializeComponent();
-            var settings = new UserSettings(fileSystemRepository);
-            settings.Load().Wait();
+
+            fileSystemRepository = new FileSystemRepository();
+            userSettingsService = new UserSettingsService(fileSystemRepository);
+
+            var settings = userSettingsService.Load().Result;
             FactionName.Text = settings.FactionName;
             OffLimits.Text = string.Join(",", settings.OffLimits);
 
@@ -40,10 +46,10 @@ namespace BGSBuddy
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
-            var settings = new UserSettings(fileSystemRepository);
+            var settings = new UserSettings();
             settings.FactionName = FactionName.Text;
             settings.OffLimits = OffLimits.Text.Split(',').ToList();
-            settings.Save().Wait();
+            userSettingsService.Save(settings).Wait();
 
             Properties.Settings.Default.Faction = FactionName.Text;
             Properties.Settings.Default.OffLimits = OffLimits.Text;

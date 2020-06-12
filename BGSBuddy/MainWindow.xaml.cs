@@ -1,7 +1,8 @@
 ﻿using Entities;
 using Interfaces.Repositories;
-using Microsoft.VisualBasic;
+using Interfaces.Services;
 using Repositories;
+using Services;
 using System;
 using System.Diagnostics;
 using System.Linq;
@@ -16,21 +17,25 @@ namespace BGSBuddy
     /// </summary>
     public partial class MainWindow : Window
     {
-        private IFileSystemRepository fileSystemRepository = new FileSystemRepository();
+        private IFileSystemRepository fileSystemRepository;
+        private IUserSettingsService userSettingsService;
 
-        public SituationReport situationReport = SituationReport.Instance.Result;
+        public SituationReport situationReport = new SituationReport();
 
         public MainWindow()
         {
             InitializeComponent();
+
+            fileSystemRepository = new FileSystemRepository();
+            userSettingsService = new UserSettingsService(fileSystemRepository);
+
             CheckForUpdates();
             GetSituations();
         }
 
         private void GetSettings()
         {
-            var userSettings = new UserSettings(fileSystemRepository);
-            userSettings.Load().Wait();
+            var userSettings =  userSettingsService.Load().Result;
             situationReport.FactionName = userSettings.FactionName;
             situationReport.OffLimits = userSettings.OffLimits;
         }
