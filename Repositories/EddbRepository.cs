@@ -11,32 +11,21 @@ namespace Repositories
     {
         private readonly string baseUrl = "https://eddbapi.kodeblox.com/api/v4/";
         private HttpClient client = new HttpClient();
-        private FileSystemRepository _fileSystemRepository;
 
         public EddbRepository()
         {
-            _fileSystemRepository = new FileSystemRepository();
         }
 
-        public async Task<SolarSystem> GetSystem(string name, DateTime lastTick, bool forceUpdate = false)
+        public async Task<SolarSystem> GetSystem(string name)
         {
-            var file = "SI" + name + ".log";
-            var json = _fileSystemRepository.RetrieveJsonFromFile(file);
-            if (string.IsNullOrEmpty(json) || forceUpdate)
-                json = await FetchSystem(name).ConfigureAwait(false);
-            var system = ConvertJsonToSystem(json);
-            if (system.UpdatedOn < DateTime.UtcNow && !forceUpdate)
-                system = await GetSystem(name, lastTick, true);
-            return system;
+            var json = await FetchSystem(name).ConfigureAwait(false);
+            return ConvertJsonToSystem(json);
         }
 
         public async Task<string> FetchSystem(string name)
         {
-            var file = "SI" + name + ".log";
             var url = baseUrl + "populatedsystems?name=" + HttpUtility.UrlEncode(name);
-            var response = await client.GetStringAsync(url).ConfigureAwait(false);
-            _fileSystemRepository.SaveJsonToFile(response, file);
-            return response;
+            return await client.GetStringAsync(url).ConfigureAwait(false);
         }
 
         private SolarSystem ConvertJsonToSystem(string json)

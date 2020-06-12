@@ -8,5 +8,6 @@ namespace Interfaces.Repositories
     {
         Task<List<Asset>> GetAssets(string systemName);
         Task<SolarSystem> GetSolarSystem(string systemName);
+        Task<Faction> GetFaction(string factionName);
     }
 }

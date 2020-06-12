@@ -17,6 +17,8 @@ namespace BGSBuddy
     /// </summary>
     public partial class MainWindow : Window
     {
+        private IEliteBgsRepository eliteBgsRepository;
+        private IFactionsService factionsService;
         private IFileSystemRepository fileSystemRepository;
         private IUserSettingsService userSettingsService;
 
@@ -26,6 +28,8 @@ namespace BGSBuddy
         {
             InitializeComponent();
 
+            eliteBgsRepository = new EliteBgsRepository();
+            factionsService = new FactionsService(eliteBgsRepository);
             fileSystemRepository = new FileSystemRepository();
             userSettingsService = new UserSettingsService(fileSystemRepository);
 
@@ -63,9 +67,7 @@ namespace BGSBuddy
                 RefreshButton.Content = "Refresh";
             }
 
-            var repository = new EliteBgsRepository();
-            situationReport.LastTick = await repository.GetTick();
-            var faction = await repository.GetFaction(situationReport.FactionName, situationReport.LastTick);
+            var faction = await eliteBgsRepository.GetFaction(situationReport.FactionName);
 
             situationReport.CriticalReports.Clear();
             situationReport.WarningReports.Clear();
