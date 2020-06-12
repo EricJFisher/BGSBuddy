@@ -1,4 +1,5 @@
 ﻿using Entities;
+using Interfaces.Repositories;
 using Repositories.EliteBgsTypes.FactionRequest;
 using Repositories.EliteBgsTypes.StationRequest;
 using Repositories.EliteBgsTypes.SystemRequest;
@@ -12,7 +13,7 @@ using Faction = Entities.Faction;
 
 namespace Repositories
 {
-    public class EliteBgsRepository
+    public class EliteBgsRepository : IEliteBgsRepository
     {
         private readonly string baseUrl = "https://elitebgs.app/api/ebgs/v4/";
         private HttpClient client = new HttpClient();
@@ -35,27 +36,6 @@ namespace Repositories
             if (faction.UpdatedOn < lastTick && !forceUpdate)
                 faction = await GetFaction(name, lastTick, true).ConfigureAwait(false);
             return faction;
-        }
-
-        public async Task<SolarSystem> GetSystem(string name, DateTime lastTick, bool forceUpdate = false)
-        {
-            var file = "S" + name + ".log";
-            var json = _fileSystemRepository.RetrieveJsonFromFile(file);
-            if (string.IsNullOrEmpty(json) || forceUpdate)
-                json = await FetchSystem(name);
-            var system = await ConvertJsonToSystem(json);
-            if (system.UpdatedOn < lastTick && !forceUpdate)
-                system = await GetSystem(name, lastTick, true).ConfigureAwait(false);
-            return system;
-        }
-
-        public async Task<List<Asset>> GetStations(string systemName, bool forceUpdate = false)
-        {
-            var file = "A" + systemName + ".log";
-            var json = _fileSystemRepository.RetrieveJsonFromFile(file);
-            if (string.IsNullOrEmpty(json) || forceUpdate)
-                json = await FetchStation(systemName);
-            return ConvertJsonToStations(json);
         }
 
         public async Task<string> FetchFaction(string name)
@@ -87,7 +67,7 @@ namespace Repositories
                     solarSystem.ConflictStatus = system.Conflicts[0].Status;
                 }
 
-                var stationRequest = await GetSystem(system.SystemName, lastTick).ConfigureAwait(false);
+                var stationRequest = await GetSolarSystem(system.SystemName).ConfigureAwait(false);
                 var systemRequest = await _eddbRepository.GetSystem(system.SystemName, lastTick).ConfigureAwait(false);
 
                 solarSystem.ControllingFaction = systemRequest.ControllingFaction;
@@ -98,54 +78,6 @@ namespace Repositories
                 faction.SolarSystems.Add(solarSystem);
             }
             return faction;
-        }
-
-        private async Task<SolarSystem> ConvertJsonToSystem(string json)
-        {
-            var system = new SolarSystem();
-
-            var request = EliteBgsSystemRequest.FromJson(json);
-            system.Name = request.Docs[0].Name;
-            system.ControllingFaction = request.Docs[0].ControllingMinorFaction;
-            system.UpdatedOn = request.Docs[0].UpdatedAt.UtcDateTime;
-            if(string.IsNullOrEmpty(request.Docs[0].State))
-                system.States.Add(request.Docs[0].State);
-            system.Assets = await GetStations(system.Name);
-            return system;
-        }
-
-        private List<Asset> ConvertJsonToStations(string json)
-        {
-            var assets = new List<Asset>();
-
-            var request = EliteBgsStationRequest.FromJson(json);
-            foreach (var item in request.Docs)
-            {
-                var asset = new Asset();
-                asset.Name = item.Name;
-                asset.SolarSystem = item.System;
-                asset.Faction = item.ControllingMinorFaction;
-                assets.Add(asset);
-            }
-            return assets;
-        }
-
-        public async Task<string> FetchSystem(string name)
-        {
-            var file = "S" + name + ".log";
-            var url = baseUrl + "systems?name=" + HttpUtility.UrlEncode(name);
-            var response = await client.GetStringAsync(url).ConfigureAwait(false);
-            _fileSystemRepository.SaveJsonToFile(response, file);
-            return response;
-        }
-
-        public async Task<string> FetchStation(string systemName)
-        {
-            var file = "A" + systemName + ".log";
-            var url = baseUrl + "stations?system=" + HttpUtility.UrlEncode(systemName);
-            var response = await client.GetStringAsync(url).ConfigureAwait(false);
-            _fileSystemRepository.SaveJsonToFile(response, file);
-            return response;
         }
 
         private DateTime ConvertJsonToTick(string json)
@@ -164,6 +96,67 @@ namespace Repositories
         {
             var url = baseUrl + "ticks";
             return await client.GetStringAsync(url).ConfigureAwait(false);
+        }
+
+        public async Task<List<Asset>> GetAssets(string systemName)
+        {
+            // Get Asset json from EliteBGS
+            var json = await FetchAsset(systemName);
+
+            // Convert json to Assets
+            return ConvertJsonToAssets(json);
+        }
+
+        private async Task<string> FetchAsset(string systemName)
+        {
+            var url = baseUrl + "stations?system=" + HttpUtility.UrlEncode(systemName);
+            return await client.GetStringAsync(url).ConfigureAwait(false);
+        }
+
+        private List<Asset> ConvertJsonToAssets(string json)
+        {
+            var assets = new List<Asset>();
+
+            var request = EliteBgsStationRequest.FromJson(json);
+            foreach (var item in request.Docs)
+            {
+                var asset = new Asset();
+                asset.Name = item.Name;
+                asset.SolarSystem = item.System;
+                asset.Faction = item.ControllingMinorFaction;
+                asset.UpdatedOn = item.UpdatedAt.UtcDateTime;
+                assets.Add(asset);
+            }
+            return assets;
+        }
+
+        public async Task<SolarSystem> GetSolarSystem(string systemName)
+        {
+            // Get Solar System from EliteBGS
+            var json = await FetchSolarSystem(systemName);
+
+            // Convert Json to Solar System
+            return await ConvertJsonToSolarSystem(json);
+        }
+
+        private async Task<string> FetchSolarSystem(string name)
+        {
+            var url = baseUrl + "systems?name=" + HttpUtility.UrlEncode(name);
+            return await client.GetStringAsync(url).ConfigureAwait(false);
+        }
+
+        private async Task<SolarSystem> ConvertJsonToSolarSystem(string json)
+        {
+            var system = new SolarSystem();
+
+            var request = EliteBgsSystemRequest.FromJson(json);
+            system.Name = request.Docs[0].Name;
+            system.ControllingFaction = request.Docs[0].ControllingMinorFaction;
+            system.UpdatedOn = request.Docs[0].UpdatedAt.UtcDateTime;
+            if (string.IsNullOrEmpty(request.Docs[0].State))
+                system.States.Add(request.Docs[0].State);
+            system.Assets = await GetAssets(system.Name);
+            return system;
         }
     }
 }
