@@ -14,6 +14,8 @@ namespace Entities
         public List<Report> PartialReports = new List<Report>();
         public List<string> OffLimits { get; set; } = new List<string>();
 
+        public Faction Faction { get; set; } = new Faction();
+
         public bool HasChanged { get; set; } = false;
     }
 }

@@ -1,6 +1,6 @@
 ﻿using Entities;
 using Repositories.EddbRequestTypes;
-using System;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web;
@@ -38,7 +38,8 @@ namespace Repositories
             system.UpdatedOn = request.Docs[0].UpdatedAt.UtcDateTime;
             foreach (var state in request.Docs[0].States)
             {
-                system.States.Add(state.Name);
+                if(!system.ActiveStates.Any(e => e == state.Name))
+                    system.ActiveStates.Add(state.Name);
             }
             foreach (var faction in request.Docs[0].MinorFactionPresences)
             {

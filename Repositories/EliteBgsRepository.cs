@@ -6,6 +6,7 @@ using Repositories.EliteBgsTypes.SystemRequest;
 using Repositories.EliteBgsTypes.TickRequest;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web;
@@ -24,22 +25,25 @@ namespace Repositories
             _eddbRepository = new EddbRepository();
         }
 
+        public async Task<DateTime> GetTick()
+        {
+            // Get Tick from EliteBGS
+            var json = await FetchTick();
+
+            // Convert Json to Tick's DateTime
+            return ConvertJsonToTick(json);
+        }
+
+        private async Task<string> FetchTick()
+        {
+            var url = baseUrl + "ticks";
+            return await client.GetStringAsync(url).ConfigureAwait(false);
+        }
+
         private DateTime ConvertJsonToTick(string json)
         {
             var request = EliteBgsTickRequest.FromJson(json);
             return request[0].Time.UtcDateTime;
-        }
-
-        public async Task<DateTime> GetTick()
-        {
-            var json = await FetchTick();
-            return ConvertJsonToTick(json);
-        }
-
-        public async Task<string> FetchTick()
-        {
-            var url = baseUrl + "ticks";
-            return await client.GetStringAsync(url).ConfigureAwait(false);
         }
 
         public async Task<List<Asset>> GetAssets(string systemName)
@@ -97,11 +101,30 @@ namespace Repositories
             system.Name = request.Docs[0].Name;
             system.ControllingFaction = request.Docs[0].ControllingMinorFaction;
             system.UpdatedOn = request.Docs[0].UpdatedAt.UtcDateTime;
-            if (string.IsNullOrEmpty(request.Docs[0].State))
-                system.States.Add(request.Docs[0].State);
+            if (!string.IsNullOrEmpty(request.Docs[0].State))
+                system.State = request.Docs[0].State;
             foreach (var subFaction in request.Docs[0].Factions)
                 system.SubFactions.Add(new SubFaction { Name = subFaction.Name });
-            system.Assets = await GetAssets(system.Name);
+            foreach (var conflict in request.Docs[0].Conflicts)
+            {
+                system.Conflicts.Add(new Entities.Conflict { 
+                    Status = conflict.Status,
+                    Type = conflict.Type,
+                    Factions = new List<ConflictFaction> { 
+                        new ConflictFaction { 
+                            DaysWon = (int)conflict.Faction1.DaysWon,
+                            FactionName = conflict.Faction1.Name,
+                            Stake = conflict.Faction1.Stake
+                        },
+                        new ConflictFaction
+                        {
+                            DaysWon = (int)conflict.Faction2.DaysWon,
+                            FactionName = conflict.Faction2.Name,
+                            Stake = conflict.Faction2.Stake
+                        }
+                    }
+                });
+            }
             return system;
         }
 
@@ -134,20 +157,39 @@ namespace Repositories
             {
                 var solarSystem = new SolarSystem();
                 solarSystem.Name = system.SystemName;
-                if (system.Conflicts.Count > 0)
+                foreach (var conflict in system.Conflicts)
                 {
-                    solarSystem.ConflictType = system.Conflicts[0].Type;
-                    solarSystem.ConflictStatus = system.Conflicts[0].Status;
+                    solarSystem.Conflicts.Add(new Entities.Conflict
+                    {
+                        Status = conflict.Status,
+                        Type = conflict.Type,
+                        Factions = new List<ConflictFaction>
+                        {
+                            new ConflictFaction{
+                                DaysWon = (int)conflict.DaysWon,
+                                FactionName = faction.Name,
+                                Stake = conflict.Stake
+                            },
+                            new ConflictFaction
+                            {
+                                FactionName = conflict.OpponentName
+                            }
+                        }
+                    });
                 }
+                solarSystem.UpdatedOn = system.UpdatedAt.UtcDateTime;
+                solarSystem.ActiveStates = system.ActiveStates.Select(e => e.State).ToList();
+                solarSystem.PendingStates = system.PendingStates.Select(e => e.State).ToList();
+                solarSystem.State = system.State;
 
-                var stationRequest = await GetSolarSystem(system.SystemName).ConfigureAwait(false);
-                var systemRequest = await _eddbRepository.GetSystem(system.SystemName).ConfigureAwait(false);
+                var subFaction = new SubFaction();
+                subFaction.Name = faction.Name;
+                subFaction.Influence = system.Influence;
+                subFaction.ActiveStates = system.ActiveStates.Select(e => e.State).ToList();
+                subFaction.PendingStates = system.PendingStates.Select(e => e.State).ToList();
+                subFaction.UpdatedOn = system.UpdatedAt.UtcDateTime;
+                solarSystem.SubFactions.Add(subFaction);
 
-                solarSystem.ControllingFaction = systemRequest.ControllingFaction;
-                solarSystem.Assets = stationRequest.Assets;
-                solarSystem.States = systemRequest.States;
-                solarSystem.SubFactions = systemRequest.SubFactions;
-                solarSystem.UpdatedOn = stationRequest.UpdatedOn;
                 faction.SolarSystems.Add(solarSystem);
             }
             return faction;

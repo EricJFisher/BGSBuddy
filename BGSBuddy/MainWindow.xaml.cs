@@ -17,9 +17,13 @@ namespace BGSBuddy
     /// </summary>
     public partial class MainWindow : Window
     {
+        private IAssetsService assetsService;
         private IEliteBgsRepository eliteBgsRepository;
         private IFactionsService factionsService;
         private IFileSystemRepository fileSystemRepository;
+        private ISituationReportsService situationReportsService;
+        private ISolarSystemsService solarSystemsService;
+        private ITickService tickService;
         private IUserSettingsService userSettingsService;
 
         public SituationReport situationReport = new SituationReport();
@@ -29,7 +33,11 @@ namespace BGSBuddy
             InitializeComponent();
 
             eliteBgsRepository = new EliteBgsRepository();
+            assetsService = new AssetsService(eliteBgsRepository);
             factionsService = new FactionsService(eliteBgsRepository);
+            solarSystemsService = new SolarSystemsService(eliteBgsRepository);
+            tickService = new TickService(eliteBgsRepository);
+            situationReportsService = new SituationReportsService(assetsService, factionsService, solarSystemsService, tickService);
             fileSystemRepository = new FileSystemRepository();
             userSettingsService = new UserSettingsService(fileSystemRepository);
 
@@ -67,74 +75,13 @@ namespace BGSBuddy
                 RefreshButton.Content = "Refresh";
             }
 
-            var faction = await eliteBgsRepository.GetFaction(situationReport.FactionName);
-
             situationReport.CriticalReports.Clear();
             situationReport.WarningReports.Clear();
             situationReport.OpportunityReports.Clear();
             situationReport.ControlledReports.Clear();
             situationReport.PartialReports.Clear();
 
-            foreach(var system in faction.SolarSystems)
-            {
-                if (situationReport.OffLimits.Any(e => e.ToLower() == system.Name.ToLower()))
-                    continue;
-
-                var influences = system.SubFactions.OrderByDescending(e => e.Influence).Select(e => e.Influence).ToList();
-
-                bool weControl = false;
-                bool totalControl = true;
-                bool closeToConflict = false; 
-                string states = string.Empty;
-
-                if (system.ControllingFaction.Equals(situationReport.FactionName, StringComparison.OrdinalIgnoreCase))
-                    weControl = true;
-                if (influences[0] - 10 <= influences[1])
-                    closeToConflict = true;
-                if (system.Assets.Any(e => e.Faction.ToLower() != situationReport.FactionName.ToLower()))
-                    totalControl = false;
-                if (system.States != null)
-                    states = string.Join(",", system.States);
-
-                // Stale Data
-                if (system.UpdatedOn <= DateTime.UtcNow.AddDays(-2))
-                    situationReport.WarningReports.Add(new Report(system.Name, "Stale Data", "Over " + (DateTime.UtcNow - system.UpdatedOn).Days.ToString() + " days old", states));
-
-                // In or Pending Conflict
-                if (!String.IsNullOrEmpty(system.ConflictType) && !String.IsNullOrEmpty(system.ConflictStatus))
-                    situationReport.CriticalReports.Add(new Report(system.Name, system.ConflictType, system.ConflictStatus, states));
-               
-                // Asset Reallocation opportunity
-                if (!totalControl && closeToConflict)
-                    situationReport.OpportunityReports.Add(new Report(system.Name, "Asset Reallocation Opportunity", system.Assets.FirstOrDefault(e => e.Faction.ToLower() != situationReport.FactionName.ToLower()).Faction, states));
-                
-                // Pointless conflict risk
-                else if(closeToConflict && string.IsNullOrEmpty(system.ConflictType))
-                    situationReport.WarningReports.Add(new Report(system.Name,"Pointless Conflict Risk","inf gap : " + Math.Round(influences[0] - influences[1], 2), states));
-                
-                // Total Control
-                if (totalControl)
-                    situationReport.ControlledReports.Add(new Report(system.Name, "Total Control", system.Assets.Count + " assets controlled.", states));
-                // Unclaimed Assets
-                else
-                    situationReport.PartialReports.Add(new Report(system.Name, "Unclamed Assets", system.Assets.Count(e => e.Faction.ToLower() != situationReport.FactionName.ToLower()) + " of " + system.Assets.Count + " assets unclaimed.", states));
-
-                // Conquest opportunity
-                if (!weControl)
-                    situationReport.OpportunityReports.Add(new Report(system.Name, "Conquest Opportunity", "inf gap : " + Math.Round(influences[0] - influences[1], 2), states));
-
-                // Subfaction considerations
-                foreach(var subFaction in system.SubFactions)
-                {
-                    // We're in retreat
-                    if (subFaction.Name == faction.Name && subFaction.ActiveStates.Exists(e => e == "Retreat"))
-                        situationReport.CriticalReports.Add(new Report(system.Name, "Retreat", "We're in retreat!!!", states));
-                    
-                    // Other faction is in retreat
-                    if (subFaction.Name != faction.Name && subFaction.ActiveStates.Exists(e => e == "Retreat"))
-                        situationReport.OpportunityReports.Add(new Report(system.Name, "Retreat Opportunity", "Other minor faction is in retreat.", states));
-                }
-            }
+            situationReport = await situationReportsService.GenerateReport(situationReport);
 
             CriticalGrid.DataContext = situationReport.CriticalReports;
             if (!situationReport.CriticalReports.Any())
