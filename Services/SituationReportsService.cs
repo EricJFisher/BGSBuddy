@@ -101,7 +101,7 @@ namespace Services
                     closeToConflict = true;
                 if (system.Assets.Any(e => e.Faction.ToLower() != situationReport.FactionName.ToLower()))
                     totalControl = false;
-                if (string.IsNullOrEmpty(system.State))
+                if (!string.IsNullOrEmpty(system.State))
                     states = system.State;
 
                 // Stale Data
@@ -143,7 +143,7 @@ namespace Services
 
                     // Other faction is in retreat
                     if (subFaction.Name != faction.Name && subFaction.ActiveStates.Exists(e => e.ToLower() == "retreat"))
-                        situationReport.OpportunityReports.Add(new Report(system.Name, "Retreat Opportunity", "Other minor faction is in retreat.", states));
+                        situationReport.OpportunityReports.Add(new Report(system.Name, "Retreat Opportunity", subFaction.Name + " is in retreat.", states));
                 }
             }
 
