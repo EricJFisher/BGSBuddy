@@ -6,7 +6,7 @@ namespace Entities
     public class SolarSystem
     {
         public string Name { get; set; }
-        public DateTime UpdatedOn { get; set; }
+        public DateTime UpdatedOn { get; set; } = new DateTime();
         public string ControllingFaction { get; set; }
         public string State { get; set; } = string.Empty;
         public List<string> ActiveStates { get; set; } = new List<string>();

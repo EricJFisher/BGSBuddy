@@ -32,7 +32,7 @@ namespace Services
                 faction = await _factionsService.Get(situationReport.FactionName);
 
             // Get Each System and it's Assets
-            foreach (var solarSystem in faction.SolarSystems.Where(e => e.UpdatedOn < tick || e.SubFactions.Count < 5).ToList())
+            foreach (var solarSystem in faction.SolarSystems.Where(e => e.UpdatedOn == null || e.UpdatedOn < tick || e.SubFactions.Count < 5).ToList())
             {
                 // Update system information
                 var temp = await _solarSystemsService.Get(solarSystem.Name);
@@ -43,6 +43,7 @@ namespace Services
                 solarSystem.PendingStates = temp.PendingStates;
                 solarSystem.State = temp.State;
                 solarSystem.SubFactions = temp.SubFactions;
+                solarSystem.UpdatedOn = temp.UpdatedOn;
 
                 // Update system assets
                 solarSystem.Assets = await _assetsService.GetAssets(solarSystem.Name);
@@ -52,7 +53,6 @@ namespace Services
             // Get Influence for each faction that doesn't have influence / state info
             foreach (var solarSystem in faction.SolarSystems.ToList())
             {
-                var test = solarSystem.SubFactions;
                 foreach (var subFaction in solarSystem.SubFactions.Where(e => e.UpdatedOn == null || e.UpdatedOn < tick).ToList())
                 {
                     if (factionsRun.Contains(subFaction.Name))
@@ -76,7 +76,6 @@ namespace Services
                         update.UpdatedOn = thisFaction.UpdatedOn;
                     }
                 }
-                test = solarSystem.SubFactions;
             }
 
             situationReport.Faction = faction;
@@ -106,7 +105,9 @@ namespace Services
 
                 // Stale Data
                 if (system.UpdatedOn <= DateTime.UtcNow.AddDays(-2))
-                    situationReport.WarningReports.Add(new Report(system.Name, "Stale Data", "Over " + (DateTime.UtcNow - system.UpdatedOn).Days.ToString() + " days old", states));
+                    situationReport.CriticalReports.Add(new Report(system.Name, "Stale Data", "System info is behind by roughly " + (DateTime.UtcNow - system.UpdatedOn).Days.ToString() + " ticks", states));
+                else if (system.UpdatedOn < tick)
+                    situationReport.WarningReports.Add(new Report(system.Name, "Stale Data", "System info is behind by at least 1 tick.", states));
 
                 // In or Pending Conflict
                 if (system.Conflicts.Any(e => e.Factions.Any(f => f.FactionName == situationReport.FactionName)))

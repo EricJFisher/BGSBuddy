@@ -126,7 +126,7 @@ namespace Repositories.EliteBgsTypes.FactionRequest
         public long Trend { get; set; }
     }
 
-    public enum Happiness { FactionHappinessband1, FactionHappinessband2, FactionHappinessband3 };
+    public enum Happiness { FactionHappinessband1, FactionHappinessband2, FactionHappinessband3, Unknown };
 
     public partial class EliteBgsFactionRequest
     {
@@ -168,6 +168,8 @@ namespace Repositories.EliteBgsTypes.FactionRequest
                     return Happiness.FactionHappinessband2;
                 case "$faction_happinessband3;":
                     return Happiness.FactionHappinessband3;
+                default:
+                    return Happiness.Unknown;
             }
             throw new Exception("Cannot unmarshal type Happiness");
         }

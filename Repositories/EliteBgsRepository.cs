@@ -18,11 +18,9 @@ namespace Repositories
     {
         private readonly string baseUrl = "https://elitebgs.app/api/ebgs/v4/";
         private HttpClient client = new HttpClient();
-        private EddbRepository _eddbRepository;
 
         public EliteBgsRepository()
         {
-            _eddbRepository = new EddbRepository();
         }
 
         public async Task<DateTime> GetTick()
