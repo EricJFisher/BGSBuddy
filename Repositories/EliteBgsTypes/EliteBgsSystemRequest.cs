@@ -84,10 +84,52 @@ namespace Repositories.EliteBgsTypes.SystemRequest
         public string SystemAddress { get; set; }
 
         [JsonProperty("conflicts")]
-        public List<object> Conflicts { get; set; }
+        public Conflict[] Conflicts { get; set; }
     }
 
     public partial class Faction
+    {
+        [JsonProperty("name")]
+        public string Name { get; set; }
+
+        [JsonProperty("name_lower")]
+        public string NameLower { get; set; }
+    }
+
+    public partial class Conflict
+    {
+        [JsonProperty("type")]
+        public string Type { get; set; }
+
+        [JsonProperty("status")]
+        public string Status { get; set; }
+
+        [JsonProperty("faction1")]
+        public Faction1Class Faction1 { get; set; }
+
+        [JsonProperty("faction2")]
+        public Faction1Class Faction2 { get; set; }
+    }
+
+    public partial class Faction1Class
+    {
+        [JsonProperty("name")]
+        public string Name { get; set; }
+
+        [JsonProperty("name_lower")]
+        public string NameLower { get; set; }
+
+        [JsonProperty("stake")]
+        public string Stake { get; set; }
+
+        [JsonProperty("stake_lower")]
+        public string StakeLower { get; set; }
+
+        [JsonProperty("days_won")]
+        public long DaysWon { get; set; }
+    }
+
+    public partial class FactionElement
     {
         [JsonProperty("name")]
         public string Name { get; set; }

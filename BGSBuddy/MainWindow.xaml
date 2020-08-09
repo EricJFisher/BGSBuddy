@@ -22,19 +22,19 @@
         </TextBlock>
         <Button x:Name="SettingsButton" Click="SettingsButton_Click">Settings</Button>
         <Button x:Name="RefreshButton" Click="RefreshButton_Click">Refresh</Button>
-        <TextBlock Text="Critical" Background="Red" Foreground="Black" FontSize="16"/>
+        <TextBlock x:Name="CriticalTitle" Text="Critical" Background="Red" Foreground="Black" FontSize="16"/>
         <DataGrid x:Name="CriticalGrid" ItemsSource="{Binding}" AutoGenerateColumns="True">
         </DataGrid>
-        <TextBlock Text="Warning" Background="Orange" Foreground="Black" FontSize="16"/>
+        <TextBlock x:Name="WarningTitle" Text="Warning" Background="Orange" Foreground="Black" FontSize="16"/>
         <DataGrid x:Name="WarningGrid" ItemsSource="{Binding}" AutoGenerateColumns="True">
         </DataGrid>
-        <TextBlock Text="Opportunities" Background="DeepSkyBlue" Foreground="Black" FontSize="16"/>
+        <TextBlock x:Name="OpportunitiesTitle" Text="Opportunities" Background="DeepSkyBlue" Foreground="Black" FontSize="16"/>
         <DataGrid x:Name="OpportunitiesGrid" ItemsSource="{Binding}" AutoGenerateColumns="True">
         </DataGrid>
-        <TextBlock Text="Controlled Systems" Background="Green" FontSize="16" />
+        <TextBlock x:Name="ControlledTitle" Text="Controlled Systems" Background="Green" FontSize="16" />
         <DataGrid x:Name="ControlledGrid" ItemsSource="{Binding}" AutoGenerateColumns="True">
         </DataGrid>
-        <TextBlock Text="Partially Controlled Systems" Background="Tan" Foreground="Black" FontSize="16" />
+        <TextBlock x:Name="PartialTitle" Text="Partially Controlled Systems" Background="Tan" Foreground="Black" FontSize="16" />
         <DataGrid x:Name="PartialGrid" ItemsSource="{Binding}" AutoGenerateColumns="True">
         </DataGrid>
     </StackPanel>

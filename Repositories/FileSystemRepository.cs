@@ -1,29 +1,29 @@
-﻿using System;
+﻿using Interfaces.Repositories;
+using System;
 using System.IO;
-using System.Threading.Tasks;
 
 namespace Repositories
 {
-    public class FileSystemRepository
+    public class FileSystemRepository : IFileSystemRepository
     {
-        private string logPath;
+        private readonly string _logPath;
 
         public FileSystemRepository()
         {
-            logPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + Path.DirectorySeparatorChar + "BGSBuddy" + Path.DirectorySeparatorChar;
-            if (!Directory.Exists(logPath))
-                Directory.CreateDirectory(logPath);
+            _logPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + Path.DirectorySeparatorChar + "BGSBuddy" + Path.DirectorySeparatorChar;
+            if (!Directory.Exists(_logPath))
+                Directory.CreateDirectory(_logPath);
         }
 
-        public async Task SaveJsonToFile(string json, string fileName)
+        public void SaveJsonToFile(string json, string fileName)
         {
-            File.WriteAllText(logPath + fileName, json);
+            File.WriteAllText(_logPath + fileName, json);
         }
 
-        public async Task<string> RetrieveJsonFromFile(string fileName)
+        public string RetrieveJsonFromFile(string fileName)
         {
-            if (File.Exists(logPath + fileName))
-                return File.ReadAllText(logPath + fileName);
+            if (File.Exists(_logPath + fileName))
+                return File.ReadAllText(_logPath + fileName);
             else
                 return string.Empty;
         }
