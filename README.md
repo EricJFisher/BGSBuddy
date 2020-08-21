@@ -2,13 +2,16 @@
 
 BGS buddy is a simple application for generating an Elite Dangerous Back Ground Situation Report.
 
+![.NET Core](https://github.com/EricJFisher/BGSBuddy/workflows/.NET%20Core/badge.svg)
+
 ## Critical Reports
  - Systems where you are at risk of losing control of the system due to conflict
  - Systems where you are in retreat
+ - Systems where data is stale (over 2 ticks old)
 
 ## Warning Reports
  - Systems where you're in danger of triggering conflict that won't gain you any assets
- - Systems where data is stale (over 24 hours out of date)
+ - Systems where data is stale (hasn't been updated since most recent tick)
  
 ## Opportunity Reports
  - Systems where you are near a conflict that can gain you a new asset (within 10% influence)
