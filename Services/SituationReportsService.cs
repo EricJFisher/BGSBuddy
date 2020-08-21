@@ -115,13 +115,11 @@ namespace Services
                     var conflict = system.Conflicts.FirstOrDefault(e => e.Factions.Any(f => f.FactionName == situationReport.FactionName));
                     situationReport.CriticalReports.Add(new Report(system.Name, conflict.Type, conflict.Status, "Asset at stake: " + conflict.Factions.Any(e => e.Stake != string.Empty )));
                 }
-
                 // Asset Reallocation opportunity
-                if (!totalControl && closeToConflict)
-                    situationReport.OpportunityReports.Add(new Report(system.Name, "Asset Reallocation Opportunity", system.Assets.FirstOrDefault(e => e.Faction.ToLower() != situationReport.FactionName.ToLower()).Faction, states));
-
+                else if (!totalControl && closeToConflict)
+                    situationReport.OpportunityReports.Add(new Report(system.Name, "Asset Reallocation Opportunity", "inf gap : " + Math.Round(influences[0] - influences[1], 2).ToString("p"), states));
                 // Pointless conflict risk
-                else if (closeToConflict && system.Conflicts.Any(e => e.Factions.Any(f => f.Stake == string.Empty)))
+                else if (closeToConflict)
                     situationReport.WarningReports.Add(new Report(system.Name, "Pointless Conflict Risk", "inf gap : " + Math.Round(influences[0] - influences[1], 2).ToString("p"), states));
 
                 // Total Control
