@@ -12,6 +12,8 @@ BGS buddy is a simple application for generating an Elite Dangerous Back Ground 
 ## Warning Reports
  - Systems where you're in danger of triggering conflict that won't gain you any assets
  - Systems where data is stale (hasn't been updated since most recent tick)
+ - Systems where you're nearing expansion (which may or may not be desired)
+ - Systems you're nearing retreat
  
 ## Opportunity Reports
  - Systems where you are near a conflict that can gain you a new asset (within 10% influence)
