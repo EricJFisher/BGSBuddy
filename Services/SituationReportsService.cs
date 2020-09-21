@@ -92,12 +92,18 @@ namespace Services
                 bool weControl = false;
                 bool totalControl = true;
                 bool closeToConflict = false;
+                bool closeToExpansion = false;
+                bool closeToRetreat = false;
                 string states = string.Empty;
 
                 if (system.ControllingFaction.Equals(situationReport.FactionName, StringComparison.OrdinalIgnoreCase))
                     weControl = true;
                 if (influences[0] - 0.10 <= influences[1])
                     closeToConflict = true;
+                if (influences[0] <= 0.075)
+                    closeToRetreat = true;
+                else if (influences[0] >= 0.65)
+                    closeToExpansion = true;
                 if (system.Assets.Any(e => e.Faction.ToLower() != situationReport.FactionName.ToLower()))
                     totalControl = false;
                 if (!string.IsNullOrEmpty(system.State))
@@ -121,6 +127,13 @@ namespace Services
                 // Pointless conflict risk
                 else if (closeToConflict)
                     situationReport.WarningReports.Add(new Report(system.Name, "Pointless Conflict Risk", "inf gap : " + Math.Round(influences[0] - influences[1], 2).ToString("p"), states));
+
+                // Expansion warning
+                if (closeToExpansion && weControl)
+                    situationReport.WarningReports.Add(new Report(system.Name, "System is nearing expansion.", "current influence : " + Math.Round(influences[0], 2).ToString("p"), states));
+                // Near retreat warning
+                else if(closeToRetreat)
+                    situationReport.WarningReports.Add(new Report(system.Name, "System is nearing retreat.", "current influence : " + Math.Round(influences[0], 2).ToString("p"), states));
 
                 // Total Control
                 if (totalControl)
