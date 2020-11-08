@@ -91,6 +91,7 @@ namespace Services
 
                 bool weControl = false;
                 bool totalControl = true;
+                bool inConflict = false;
                 bool closeToConflict = false;
                 bool closeToExpansion = false;
                 bool closeToRetreat = false;
@@ -100,6 +101,8 @@ namespace Services
                     weControl = true;
                 if (influences[0] - 0.10 <= influences[1])
                     closeToConflict = true;
+                if (system.Conflicts.Any(e => e.Factions.Any(f => f.FactionName == situationReport.FactionName)))
+                    inConflict = true;
                 if (influences[0] <= 0.075)
                     closeToRetreat = true;
                 else if (influences[0] >= 0.65)
@@ -116,7 +119,7 @@ namespace Services
                     situationReport.WarningReports.Add(new Report(system.Name, "Stale Data", "System info is behind by at least 1 tick.", states));
 
                 // In or Pending Conflict
-                if (system.Conflicts.Any(e => e.Factions.Any(f => f.FactionName == situationReport.FactionName)))
+                if (inConflict)
                 {
                     var conflict = system.Conflicts.FirstOrDefault(e => e.Factions.Any(f => f.FactionName == situationReport.FactionName));
                     situationReport.CriticalReports.Add(new Report(system.Name, conflict.Type, conflict.Status, "Asset at stake: " + conflict.Factions.Any(e => e.Stake != string.Empty )));
@@ -143,7 +146,7 @@ namespace Services
                     situationReport.PartialReports.Add(new Report(system.Name, "Unclamed Assets", system.Assets.Count(e => e.Faction.ToLower() != situationReport.FactionName.ToLower()) + " of " + system.Assets.Count + " assets unclaimed.", states));
 
                 // Conquest opportunity
-                if (!weControl)
+                if (!weControl && !inConflict)
                     situationReport.OpportunityReports.Add(new Report(system.Name, "Conquest Opportunity", "inf gap : " + Math.Round(influences[0] - influences[1], 2).ToString("p"), states));
 
                 // Subfaction considerations
