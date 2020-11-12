@@ -2,8 +2,6 @@
 
 BGS buddy is a simple application for generating an Elite Dangerous Back Ground Situation Report.
 
-![.NET Core](https://github.com/EricJFisher/BGSBuddy/workflows/.NET%20Core/badge.svg)
-
 ![Sample Report](https://github.com/EricJFisher/BGSBuddy/blob/master/SampleReport.PNG)
 
 ## Critical Reports
