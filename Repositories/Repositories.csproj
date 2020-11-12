@@ -1,24 +1,19 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>net5.0-windows7.0</TargetFramework>
+    <OutputType>Library</OutputType>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="DotNetZip" Version="1.13.8" />
-    <PackageReference Include="NetMQ" Version="4.0.0.207" />
+    <PackageReference Include="DotNetZip" Version="1.14.0" />
+    <PackageReference Include="NetMQ" Version="4.0.1.6" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Entities\Entities.csproj" />
     <ProjectReference Include="..\Interfaces\Interfaces.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="Windows.Foundation.UniversalApiContract">
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\Windows Kits\10\References\10.0.18362.0\Windows.Foundation.UniversalApiContract\8.0.0.0\Windows.Foundation.UniversalApiContract.winmd</HintPath>
-    </Reference>
   </ItemGroup>
 
 </Project>
