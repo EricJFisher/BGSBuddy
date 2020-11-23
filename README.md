@@ -36,4 +36,4 @@ BGS buddy is a simple application for generating an Elite Dangerous Back Ground 
 
 ## Code situation
 
-I've decided to open source it to share with others, however; it was a proof of concept hack job so the code is not up to the quality it should be, I will correct this over time, but just advising it's a bit of an untestable mess atm, you've been warning.
+I've decided to open source it to share with others, however; it was a proof of concept hack job so the code is not up to the quality it should be, I will correct this over time, but just advising it's a bit of an untestable mess atm, you've been warned.
