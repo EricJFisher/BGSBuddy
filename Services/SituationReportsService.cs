@@ -156,9 +156,13 @@ namespace Services
                     if (subFaction.Name == faction.Name && subFaction.ActiveStates.Exists(e => e.ToLower() == "retreat"))
                         situationReport.CriticalReports.Add(new Report(system.Name, "Retreat", "We're in retreat!!!", states));
 
+                    // Attempt to guess if someone is near retreat who's not a "home" faction
+                    if (subFaction.Name != faction.Name && !subFaction.Name.Contains(system.Name, StringComparison.InvariantCultureIgnoreCase) && subFaction.Influence < 0.05 && !subFaction.ActiveStates.Exists(e => e.ToLower() == "retreat"))
+                        situationReport.WarningReports.Add(new Report(system.Name, "Retreat Warning", subFaction.Name + " is close to retreat", states));
+
                     // Other faction is in retreat
                     if (subFaction.Name != faction.Name && subFaction.ActiveStates.Exists(e => e.ToLower() == "retreat"))
-                        situationReport.OpportunityReports.Add(new Report(system.Name, "Retreat Opportunity", subFaction.Name + " is in retreat.", states));
+                        situationReport.WarningReports.Add(new Report(system.Name, "Retreat Opportunity", subFaction.Name + " is in retreat.", states));
                 }
             }
 

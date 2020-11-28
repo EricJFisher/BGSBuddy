@@ -1,9 +1,6 @@
 ﻿using Entities;
 using Interfaces.Repositories;
 using Interfaces.Services;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Services

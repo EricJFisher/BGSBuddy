@@ -3,7 +3,6 @@ using Interfaces.Repositories;
 using Interfaces.Services;
 using Repositories;
 using Services;
-using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
@@ -18,6 +17,7 @@ namespace BGSBuddy
     public partial class MainWindow : Window
     {
         private IAssetsService assetsService;
+        private IEddnRepository eddnRepository;
         private IEliteBgsRepository eliteBgsRepository;
         private IFactionsService factionsService;
         private IFileSystemRepository fileSystemRepository;
@@ -33,6 +33,7 @@ namespace BGSBuddy
             InitializeComponent();
 
             eliteBgsRepository = new EliteBgsRepository();
+            eddnRepository = new EddnRepository();
             assetsService = new AssetsService(eliteBgsRepository);
             factionsService = new FactionsService(eliteBgsRepository);
             solarSystemsService = new SolarSystemsService(eliteBgsRepository);
@@ -43,6 +44,7 @@ namespace BGSBuddy
 
             CheckForUpdates();
             GetSituations();
+            //eddnRepository.ListenToEddn();
         }
 
         private void GetSettings()
@@ -68,7 +70,7 @@ namespace BGSBuddy
             RefreshButton.Content = "Updating, Please Wait";
             GetSettings();
             ReportTitle.Text = situationReport.FactionName + " Situation Report";
-            if (String.IsNullOrEmpty(situationReport.FactionName))
+            if (string.IsNullOrEmpty(situationReport.FactionName))
             {
                 var popup = new Settings();
                 popup.ShowDialog();
