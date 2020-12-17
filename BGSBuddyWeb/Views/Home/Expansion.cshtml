@@ -1,0 +1,27 @@
+﻿@model BGSBuddyWeb.Models.ExpansionPlannerViewModel
+
+<h1>Expansion Targets from @Model.SystemName.</h1>
+
+<h2>Systems with space (never retreated from):</h2>
+<div id="no-retreat-div">
+    @foreach(var system in Model.NeverRetreatedSystems)
+    {
+        <div>@system.Name</div>
+    }
+</div>
+
+<h2>Systems with space (previously retreated from):</h2>
+<div id="retreated-div">
+    @foreach (var system in Model.RetreatedSystems)
+    {
+        <div>@system.Name</div>
+    }
+</div>
+
+<h2>Top 10 potential Invasion targets:</h2>
+<div id="invasion-div">
+    @foreach (var system in Model.InvasionSystems)
+    {
+        <div>@system.Name</div>
+    }
+</div>

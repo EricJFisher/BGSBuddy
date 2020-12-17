@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using System.Web;
 using Faction = Entities.Faction;
@@ -102,7 +103,9 @@ namespace Repositories
             if (!string.IsNullOrEmpty(request.Docs[0].State))
                 system.State = request.Docs[0].State;
             foreach (var subFaction in request.Docs[0].Factions)
-                system.SubFactions.Add(new SubFaction { Name = subFaction.Name });
+            {
+                system.SubFactions.Add(new SubFaction { Name = subFaction.Name, Influence = subFaction.FactionDetails.FactionPresence.Influence });
+            }
             foreach (var conflict in request.Docs[0].Conflicts)
             {
                 system.Conflicts.Add(new Entities.Conflict { 
@@ -124,6 +127,63 @@ namespace Repositories
                 });
             }
             return system;
+        }
+
+        public async Task<List<SolarSystem>> GetExpansionTargets(string solarSystem)
+        {
+            var systems = new List<SolarSystem>();
+            for (int i = 1; i < 7; i++)
+            {
+                var json = await FetchExpansionTargets(solarSystem, i);
+                systems.AddRange(await ConvertJsonToListSolarSystem(json));
+            }
+            return systems;
+        }
+
+        public async Task<string> FetchExpansionTargets(string solarSystem, int page)
+        {
+            var url = @"https://elitebgs.app/api/ebgs/v5/systems?referenceSystem=" + HttpUtility.UrlEncode(solarSystem) + "&referenceDistance=20&factionDetails=true&page=" + page;
+            return await client.GetStringAsync(url).ConfigureAwait(false);
+        }
+
+        public async Task<List<SolarSystem>> ConvertJsonToListSolarSystem(string json)
+        {
+            var solarSystems = new List<SolarSystem>();
+            var request = EliteBgsSystemRequest.FromJson(json);
+            foreach (var record in request.Docs)
+            {
+                var system = new SolarSystem();
+                system.Name = record.Name;
+                system.ControllingFaction = record.ControllingMinorFaction;
+                system.UpdatedOn = record.UpdatedAt.UtcDateTime;
+                if (!string.IsNullOrEmpty(record.State))
+                    system.State = record.State;
+                foreach (var subFaction in record.Factions)
+                    system.SubFactions.Add(new SubFaction { Name = subFaction.Name, Influence = subFaction.FactionDetails.FactionPresence.Influence });
+                foreach (var conflict in record.Conflicts)
+                {
+                    system.Conflicts.Add(new Entities.Conflict
+                    {
+                        Status = conflict.Status,
+                        Type = conflict.Type,
+                        Factions = new List<ConflictFaction> {
+                        new ConflictFaction {
+                            DaysWon = (int)conflict.Faction1.DaysWon,
+                            FactionName = conflict.Faction1.Name,
+                            Stake = conflict.Faction1.Stake
+                        },
+                        new ConflictFaction
+                        {
+                            DaysWon = (int)conflict.Faction2.DaysWon,
+                            FactionName = conflict.Faction2.Name,
+                            Stake = conflict.Faction2.Stake
+                        }
+                    }
+                    });
+                }
+                solarSystems.Add(system);
+            }
+            return solarSystems;
         }
 
         public async Task<Faction> GetFaction(string factionName)

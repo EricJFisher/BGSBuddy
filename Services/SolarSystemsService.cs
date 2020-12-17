@@ -1,6 +1,7 @@
 ﻿using Entities;
 using Interfaces.Repositories;
 using Interfaces.Services;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Services
@@ -17,6 +18,11 @@ namespace Services
         public async Task<SolarSystem> Get(string systemName)
         {
             return await _eliteBgsRepository.GetSolarSystem(systemName);
+        }
+
+        public async Task<List<SolarSystem>> GetExpansionTargets(string systemName)
+        {
+            return await _eliteBgsRepository.GetExpansionTargets(systemName);
         }
     }
 }
