@@ -1,4 +1,4 @@
-﻿<Page x:Class="BGSBuddy.ExpansionPlanner"
+﻿<Window x:Class="BGSBuddy.ExpansionPlanner"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -6,7 +6,19 @@
       xmlns:local="clr-namespace:BGSBuddy"
       mc:Ignorable="d"
       Title="ExpansionPlanner" Height="450" Width="800">
-    <Grid>
-        
-    </Grid>
-</Page>
+    <StackPanel Background="#222222">
+        <StackPanel.Resources>
+            <Style TargetType="{x:Type TextBlock}">
+                <Setter Property="Foreground" Value="#FFFFFF"/>
+            </Style>
+        </StackPanel.Resources>
+        <TextBox x:Name="SystemNameTextBox" />
+        <Button x:Name="RefreshButton" Click="RefreshButton_Click">Get Report</Button>
+        <TextBlock x:Name="SpaceAvailableTitle" Text="Space available" Background="Tan" Foreground="Black" FontSize="16"/>
+        <DataGrid x:Name="SpaceAvailableGrid" ItemsSource="{Binding}" AutoGeneratingColumn="Override_AutoGeneratingColumn">
+        </DataGrid>
+        <TextBlock x:Name="InvasionTargetTitle" Text="Invasion targets" Background="Yellow" Foreground="Black" FontSize="16"/>
+        <DataGrid x:Name="InvasionTargetGrid" ItemsSource="{Binding}" AutoGeneratingColumn="Override_AutoGeneratingColumn">
+        </DataGrid>
+    </StackPanel>
+</Window>

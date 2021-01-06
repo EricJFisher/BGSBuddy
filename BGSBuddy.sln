@@ -20,8 +20,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Interfaces", "Interfaces\In
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Services", "Services\Services.csproj", "{A4DFF160-AEE2-456B-B1B3-90FF64442945}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BGSBuddyWeb", "BGSBuddyWeb\BGSBuddyWeb.csproj", "{E94865ED-E365-463E-97F5-FA362E6C1597}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -156,26 +154,6 @@ Global
 		{A4DFF160-AEE2-456B-B1B3-90FF64442945}.Release|x64.Build.0 = Release|Any CPU
 		{A4DFF160-AEE2-456B-B1B3-90FF64442945}.Release|x86.ActiveCfg = Release|Any CPU
 		{A4DFF160-AEE2-456B-B1B3-90FF64442945}.Release|x86.Build.0 = Release|Any CPU
-		{E94865ED-E365-463E-97F5-FA362E6C1597}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E94865ED-E365-463E-97F5-FA362E6C1597}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E94865ED-E365-463E-97F5-FA362E6C1597}.Debug|ARM.ActiveCfg = Debug|Any CPU
-		{E94865ED-E365-463E-97F5-FA362E6C1597}.Debug|ARM.Build.0 = Debug|Any CPU
-		{E94865ED-E365-463E-97F5-FA362E6C1597}.Debug|ARM64.ActiveCfg = Debug|Any CPU
-		{E94865ED-E365-463E-97F5-FA362E6C1597}.Debug|ARM64.Build.0 = Debug|Any CPU
-		{E94865ED-E365-463E-97F5-FA362E6C1597}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{E94865ED-E365-463E-97F5-FA362E6C1597}.Debug|x64.Build.0 = Debug|Any CPU
-		{E94865ED-E365-463E-97F5-FA362E6C1597}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{E94865ED-E365-463E-97F5-FA362E6C1597}.Debug|x86.Build.0 = Debug|Any CPU
-		{E94865ED-E365-463E-97F5-FA362E6C1597}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E94865ED-E365-463E-97F5-FA362E6C1597}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E94865ED-E365-463E-97F5-FA362E6C1597}.Release|ARM.ActiveCfg = Release|Any CPU
-		{E94865ED-E365-463E-97F5-FA362E6C1597}.Release|ARM.Build.0 = Release|Any CPU
-		{E94865ED-E365-463E-97F5-FA362E6C1597}.Release|ARM64.ActiveCfg = Release|Any CPU
-		{E94865ED-E365-463E-97F5-FA362E6C1597}.Release|ARM64.Build.0 = Release|Any CPU
-		{E94865ED-E365-463E-97F5-FA362E6C1597}.Release|x64.ActiveCfg = Release|Any CPU
-		{E94865ED-E365-463E-97F5-FA362E6C1597}.Release|x64.Build.0 = Release|Any CPU
-		{E94865ED-E365-463E-97F5-FA362E6C1597}.Release|x86.ActiveCfg = Release|Any CPU
-		{E94865ED-E365-463E-97F5-FA362E6C1597}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

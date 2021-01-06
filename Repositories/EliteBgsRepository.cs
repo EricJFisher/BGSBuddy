@@ -17,7 +17,7 @@ namespace Repositories
 {
     public class EliteBgsRepository : IEliteBgsRepository
     {
-        private readonly string baseUrl = "https://elitebgs.app/api/ebgs/v4/";
+        private readonly string baseUrl = "https://elitebgs.app/api/ebgs/v5/";
         private HttpClient client = new HttpClient();
 
         public EliteBgsRepository()
@@ -104,7 +104,13 @@ namespace Repositories
                 system.State = request.Docs[0].State;
             foreach (var subFaction in request.Docs[0].Factions)
             {
-                system.SubFactions.Add(new SubFaction { Name = subFaction.Name, Influence = subFaction.FactionDetails.FactionPresence.Influence });
+                var faction = new SubFaction();
+                faction.Name = subFaction.Name;
+                if (subFaction?.FactionDetails?.FactionPresence?.Influence != null)
+                    faction.Influence = subFaction.FactionDetails.FactionPresence.Influence;
+                else
+                    faction.Influence = 0;
+                system.SubFactions.Add(faction);
             }
             foreach (var conflict in request.Docs[0].Conflicts)
             {

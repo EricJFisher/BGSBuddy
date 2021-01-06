@@ -169,5 +169,11 @@ namespace BGSBuddy
             Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri){ UseShellExecute = true });
             e.Handled = true;
         }
+
+        private void ExpansionButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            var expansionPlanner = new ExpansionPlanner();
+            expansionPlanner.Show();
+        }
     }
 }
