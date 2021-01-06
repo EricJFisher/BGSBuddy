@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using Repositories.EliteBgsTypes.FactionRequest;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -94,6 +95,20 @@ namespace Repositories.EliteBgsTypes.SystemRequest
 
         [JsonProperty("name_lower")]
         public string NameLower { get; set; }
+        [JsonProperty("faction_details")]
+        public FactionDetails FactionDetails { get; set; }
+    }
+
+    public partial class FactionDetails
+    {
+        [JsonProperty("faction_presence")]
+        public FactionPresence FactionPresence { get; set; }
+    }
+
+    public partial class FactionPresence
+    { 
+        [JsonProperty("influence")]
+        public double Influence { get; set; }
     }
 
     public partial class Conflict

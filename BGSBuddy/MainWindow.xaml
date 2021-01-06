@@ -22,7 +22,8 @@
         </TextBlock>
         <Button x:Name="SettingsButton" Click="SettingsButton_Click">Settings</Button>
         <Button x:Name="RefreshButton" Click="RefreshButton_Click">Refresh</Button>
-        <TextBlock x:Name="CriticalTitle" Text="Critical" Background="Red" Foreground="Black" FontSize="16"/>
+        <Button x:Name="ExpansionButton" Click="ExpansionButton_OnClick">Expansion Planner</Button>
+        <TextBlock x:Name="CriticalTitle" Text="Critical" Background="OrangeRed" Foreground="Black" FontSize="16"/>
         <DataGrid x:Name="CriticalGrid" ItemsSource="{Binding}" AutoGenerateColumns="True">
         </DataGrid>
         <TextBlock x:Name="WarningTitle" Text="Warning" Background="Orange" Foreground="Black" FontSize="16"/>

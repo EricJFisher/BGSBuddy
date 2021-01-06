@@ -101,7 +101,7 @@ namespace Services
                     weControl = true;
                 if (influences[0] - 0.10 <= influences[1])
                     closeToConflict = true;
-                if (system.Conflicts.Any(e => e.Factions.Any(f => f.FactionName == situationReport.FactionName)))
+                if (system.Conflicts.Any(e => e.Factions.Any(f => f.FactionName.ToLower() == situationReport.FactionName.ToLower())))
                     inConflict = true;
                 if (influences[0] <= 0.075)
                     closeToRetreat = true;
