@@ -96,6 +96,8 @@ namespace BGSBuddy
             InvasionTargetGrid.Items.Refresh();
 
             RefreshButton.Content = "Get Report";
+            ReportTitle.Text = expansionReport.ExpandFromSystem + " Expansion Planner Report";
+            ReportTitle.Visibility = Visibility.Visible;
         }
     }
 }

@@ -12,6 +12,8 @@
                 <Setter Property="Foreground" Value="#FFFFFF"/>
             </Style>
         </StackPanel.Resources>
+        <TextBlock x:Name="ReportTitle" Text="" FontSize="24" Visibility="Collapsed"/>
+        <TextBlock Text="System to Expand From:"/>
         <TextBox x:Name="SystemNameTextBox" />
         <Button x:Name="RefreshButton" Click="RefreshButton_Click">Get Report</Button>
         <TextBlock x:Name="SpaceAvailableTitle" Text="Space available" Background="Tan" Foreground="Black" FontSize="16"/>
