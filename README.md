@@ -1,6 +1,10 @@
 # BGSBuddy
 
-BGS buddy is a simple application for generating an Elite Dangerous Back Ground Situation Report.
+BGS buddy is a simple application for generating an Elite Dangerous Back Ground Situation Reports.
+
+# Situation Report
+
+Generates a situation report based on the faction entered into the settings while omitting any systems added to the "offlimits" list.
 
 ![Sample Report](https://github.com/EricJFisher/BGSBuddy/blob/master/SampleReport.PNG)
 
@@ -25,6 +29,22 @@ BGS buddy is a simple application for generating an Elite Dangerous Back Ground 
 
 ## Partially Controlled Systems
  - Systems you are the controlling faction, but do not control all assets in the system
+
+# Expansion Planner
+
+Generates an expansion report for planning expansions. This includes most likely places for an expasion to reach based on current data.
+
+Note: Expansion planner will omit any systems containing the controlling faction of the system entered as the system to expand from. (this is NOT based on the faction you entered in Settings)
+
+![Sample Report](https://github.com/EricJFisher/BGSBuddy/blob/master/expansionplanner.png)
+
+## Space Available
+
+ - Systems in range of the expanding system with less than 7 factions present making them available to expand into without requiring an invasion.
+
+## Invasion Targets
+
+ - Systems in range of the expanding system ordered by lowest influence of a "non-native" faction to highest making them available as targets for invasion if no systems have space available.
  
 ## FAQ
  - Does this tool save any files to my hard drive? Yes, it creates a directory `BGSBuddy` in your `Documents` folder. The file placed here `Settings.txt` contains basic application settings such as your faction name and what systems are on your offlimits list.
