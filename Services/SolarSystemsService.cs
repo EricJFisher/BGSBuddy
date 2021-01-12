@@ -38,7 +38,7 @@ namespace Services
                 {
                     expansionReport.NeverRetreatedSystemsWithSpace.Add(system);
                 }
-                else
+                else if(system.SubFactions.Count() == 7)
                 {
                     var homeFactions = await _eddbRepository.GetHomeFactions(system.Name);
                     foreach (var subFaction in system.SubFactions)
