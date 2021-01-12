@@ -1,5 +1,7 @@
 ﻿using Entities;
 using Interfaces.Repositories;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
 using Repositories.EliteBgsTypes.FactionRequest;
 using Repositories.EliteBgsTypes.StationRequest;
 using Repositories.EliteBgsTypes.SystemRequest;
@@ -138,10 +140,16 @@ namespace Repositories
         public async Task<List<SolarSystem>> GetExpansionTargets(string solarSystem)
         {
             var systems = new List<SolarSystem>();
-            for (int i = 1; i < 7; i++)
+            // never do more than 10 pages
+            for (int i = 1; i < 10; i++)
             {
                 var json = await FetchExpansionTargets(solarSystem, i);
                 systems.AddRange(await ConvertJsonToListSolarSystem(json));
+
+                // end loop if no additional pages
+                JObject o = JObject.Parse(json);
+                if (string.IsNullOrEmpty((string)o["nextPage"]))
+                    break;
             }
             return systems;
         }

@@ -10,10 +10,12 @@ namespace Services
     public class SolarSystemsService : ISolarSystemsService
     {
         private IEliteBgsRepository _eliteBgsRepository;
+        private IEddbRepository _eddbRepository;
 
-        public SolarSystemsService(IEliteBgsRepository eliteBgsRepository)
+        public SolarSystemsService(IEliteBgsRepository eliteBgsRepository, IEddbRepository eddbRepository)
         {
             _eliteBgsRepository = eliteBgsRepository;
+            _eddbRepository = eddbRepository;
         }
 
         public async Task<SolarSystem> Get(string systemName)
@@ -36,19 +38,31 @@ namespace Services
                 {
                     expansionReport.NeverRetreatedSystemsWithSpace.Add(system);
                 }
-                else if (system.SubFactions.Count > 6 && system.SubFactions.Any(e => !e.Name.Contains(system.Name, StringComparison.InvariantCultureIgnoreCase) && e.Influence < 10))
+                else
                 {
-                    var report = new InvasionReport();
-                    report.SystemName = system.Name;
-                    if (system.UpdatedOn < expansionReport.LastTick)
-                        report.TicksOld = "Up to date";
-                    else
-                        report.TicksOld = "Information is " + ((system.UpdatedOn - expansionReport.LastTick).Days + 1) + " ticks old.";
-                    report.ControllingFaction = system.ControllingFaction;
-                    var targetFaction = system.SubFactions.OrderBy(e => e.Influence).FirstOrDefault(e => !e.Name.Contains(system.Name, StringComparison.InvariantCultureIgnoreCase));
-                    report.TargetFaction = targetFaction.Name;
-                    report.Influence = Math.Round(targetFaction.Influence*100,2);
-                    expansionReport.InvasionTargets.Add(report);
+                    var homeFactions = await _eddbRepository.GetHomeFactions(system.Name);
+                    foreach (var subFaction in system.SubFactions)
+                    {
+                        if (homeFactions.Contains(subFaction.Name, StringComparer.InvariantCultureIgnoreCase))
+                            subFaction.HomeSystem = true;
+                        else
+                            subFaction.HomeSystem = false;
+                    }
+
+                    if (system.SubFactions.Any(e => !e.HomeSystem && e.Influence < 10))
+                    {
+                        var report = new InvasionReport();
+                        report.SystemName = system.Name;
+                        if (system.UpdatedOn < expansionReport.LastTick)
+                            report.TicksOld = "Up to date";
+                        else
+                            report.TicksOld = "Information is " + ((system.UpdatedOn - expansionReport.LastTick).Days + 1) + " ticks old.";
+                        report.ControllingFaction = system.ControllingFaction;
+                        var targetFaction = system.SubFactions.OrderBy(e => e.Influence).FirstOrDefault(e => !e.HomeSystem);
+                        report.TargetFaction = targetFaction.Name;
+                        report.Influence = Math.Round(targetFaction.Influence * 100, 2);
+                        expansionReport.InvasionTargets.Add(report);
+                    }
                 }
             }
             

@@ -17,6 +17,7 @@ namespace BGSBuddy
     public partial class MainWindow : Window
     {
         private IAssetsService assetsService;
+        private IEddbRepository eddbRepository;
         private IEddnRepository eddnRepository;
         private IEliteBgsRepository eliteBgsRepository;
         private IFactionsService factionsService;
@@ -34,9 +35,10 @@ namespace BGSBuddy
 
             eliteBgsRepository = new EliteBgsRepository();
             eddnRepository = new EddnRepository();
+            eddbRepository = new EddbRepository();
             assetsService = new AssetsService(eliteBgsRepository);
             factionsService = new FactionsService(eliteBgsRepository);
-            solarSystemsService = new SolarSystemsService(eliteBgsRepository);
+            solarSystemsService = new SolarSystemsService(eliteBgsRepository, eddbRepository);
             tickService = new TickService(eliteBgsRepository);
             situationReportsService = new SituationReportsService(assetsService, factionsService, solarSystemsService, tickService);
             fileSystemRepository = new FileSystemRepository();

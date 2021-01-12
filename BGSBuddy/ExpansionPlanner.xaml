@@ -13,6 +13,7 @@
             </Style>
         </StackPanel.Resources>
         <TextBlock x:Name="ReportTitle" Text="" FontSize="24" Visibility="Collapsed"/>
+        <TextBlock x:Name="ErrorBanner" Text="" FontSize="18" Visibility="Collapsed" Background="Orange" Foreground="DarkRed"/>
         <TextBlock Text="System to Expand From:"/>
         <TextBox x:Name="SystemNameTextBox" />
         <Button x:Name="RefreshButton" Click="RefreshButton_Click">Get Report</Button>

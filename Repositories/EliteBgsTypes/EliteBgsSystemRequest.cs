@@ -1,9 +1,9 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-using Repositories.EliteBgsTypes.FactionRequest;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 
 namespace Repositories.EliteBgsTypes.SystemRequest
 {
@@ -102,13 +102,16 @@ namespace Repositories.EliteBgsTypes.SystemRequest
     public partial class FactionDetails
     {
         [JsonProperty("faction_presence")]
+        [JsonConverter(typeof(FactionPresenceConverter))]
         public FactionPresence FactionPresence { get; set; }
     }
 
     public partial class FactionPresence
-    { 
+    {
         [JsonProperty("influence")]
         public double Influence { get; set; }
+        [JsonProperty("system_name_lower")]
+        public string HomeSystem { get; set; }
     }
 
     public partial class Conflict
@@ -174,5 +177,34 @@ namespace Repositories.EliteBgsTypes.SystemRequest
                 new IsoDateTimeConverter { DateTimeStyles = DateTimeStyles.AssumeUniversal }
             },
         };
+    }
+
+    internal class FactionPresenceConverter : JsonConverter
+    {
+        public override bool CanConvert(Type t) => t == typeof(FactionPresence) || t == typeof(FactionPresence[]);
+
+        public override object ReadJson(JsonReader reader, Type t, object existingValue, JsonSerializer serializer)
+        {
+            var value = new FactionPresence();
+            if (reader.TokenType == JsonToken.Null) return null;
+            else if (reader.TokenType == JsonToken.StartObject)
+            {
+                value = serializer.Deserialize<FactionPresence>(reader);
+            }
+            else if (reader.TokenType == JsonToken.StartArray)
+            {
+                var array = serializer.Deserialize<FactionPresence[]>(reader);
+                if (array.Length > 0)
+                    value = array[0];
+            }
+            return value;
+        }
+
+        public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
+        {
+            throw new NotImplementedException();
+        }
+
+        public static readonly FactionPresenceConverter Singleton = new FactionPresenceConverter();
     }
 }

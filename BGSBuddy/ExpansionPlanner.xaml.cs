@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -13,6 +14,7 @@ namespace BGSBuddy
     public partial class ExpansionPlanner : Window
     {
         private IEliteBgsRepository eliteBgsRepository;
+        private IEddbRepository eddbRepository;
         private ISolarSystemsService solarSystemsService;
         private IFileSystemRepository fileSystemRepository;
         private IUserSettingsService userSettingsService;
@@ -25,7 +27,8 @@ namespace BGSBuddy
             InitializeComponent();
 
             eliteBgsRepository = new EliteBgsRepository();
-            solarSystemsService = new SolarSystemsService(eliteBgsRepository);
+            eddbRepository = new EddbRepository();
+            solarSystemsService = new SolarSystemsService(eliteBgsRepository, eddbRepository);
             fileSystemRepository = new FileSystemRepository();
             tickService = new TickService(eliteBgsRepository);
             userSettingsService = new UserSettingsService(fileSystemRepository);
@@ -50,7 +53,15 @@ namespace BGSBuddy
             if (!string.IsNullOrEmpty(SystemNameTextBox.Text))
             {
                 expansionReport.ExpandFromSystem = SystemNameTextBox.Text;
-                GetExpansionReport();
+                try
+                {
+                    await GetExpansionReport();
+                }
+                catch(Exception ex)
+                {
+                    ErrorBanner.Visibility = Visibility.Visible;
+                    ErrorBanner.Text = "An error has occurred, try again later. (" + ex.Message + ")";
+                }
             }
         }
 
@@ -85,11 +96,20 @@ namespace BGSBuddy
         private async Task GetExpansionReport()
         {
             RefreshButton.Content = "Generating Report, please wait.";
+            if (ErrorBanner.Visibility != Visibility.Collapsed)
+                ErrorBanner.Visibility = Visibility.Collapsed;
+
             expansionReport.LastTick = await tickService.Get();
+
+            expansionReport.RetreatedSystemsWithSpace.Clear();
+            expansionReport.NeverRetreatedSystemsWithSpace.Clear();
+            expansionReport.InvasionTargets.Clear();
+
             var expansionTargets = await solarSystemsService.GetExpansionTargets(expansionReport);
 
             SpaceAvailableGrid.DataContext = expansionTargets.NeverRetreatedSystemsWithSpace;
             SpaceAvailableGrid.Items.Refresh();
+
             InvasionTargetGrid.DataContext = expansionTargets.InvasionTargets;
             InvasionTargetGrid.CanUserSortColumns = false;
             InvasionTargetGrid.Items.SortDescriptions.Add(new SortDescription("Influence", ListSortDirection.Ascending));
