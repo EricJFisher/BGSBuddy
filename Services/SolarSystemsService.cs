@@ -53,7 +53,7 @@ namespace Services
                     {
                         var report = new InvasionReport();
                         report.SystemName = system.Name;
-                        if (system.UpdatedOn < expansionReport.LastTick)
+                        if (system.UpdatedOn > expansionReport.LastTick)
                             report.TicksOld = "Up to date";
                         else
                             report.TicksOld = "Information is " + ((system.UpdatedOn - expansionReport.LastTick).Days + 1) + " ticks old.";
