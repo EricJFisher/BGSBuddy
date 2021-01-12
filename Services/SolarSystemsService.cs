@@ -56,7 +56,7 @@ namespace Services
                         if (system.UpdatedOn > expansionReport.LastTick)
                             report.TicksOld = "Up to date";
                         else
-                            report.TicksOld = "Information is " + ((system.UpdatedOn - expansionReport.LastTick).Days + 1) + " ticks old.";
+                            report.TicksOld = "Information is " + ((expansionReport.LastTick - system.UpdatedOn).Days + 1) + " ticks old.";
                         report.ControllingFaction = system.ControllingFaction;
                         var targetFaction = system.SubFactions.OrderBy(e => e.Influence).FirstOrDefault(e => !e.HomeSystem);
                         report.TargetFaction = targetFaction.Name;
