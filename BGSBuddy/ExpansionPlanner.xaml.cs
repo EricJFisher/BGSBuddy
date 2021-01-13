@@ -61,6 +61,7 @@ namespace BGSBuddy
                 {
                     ErrorBanner.Visibility = Visibility.Visible;
                     ErrorBanner.Text = "An error has occurred, try again later. (" + ex.Message + ")";
+                    RefreshButton.Content = "Get Report";
                 }
             }
         }

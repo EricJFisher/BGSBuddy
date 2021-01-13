@@ -3,6 +3,7 @@ using Interfaces.Repositories;
 using Interfaces.Services;
 using Repositories;
 using Services;
+using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
@@ -69,6 +70,9 @@ namespace BGSBuddy
 
         private async Task GetSituations()
         {
+            if (ErrorBanner.Visibility == Visibility.Visible)
+                ErrorBanner.Visibility = Visibility.Collapsed;
+
             RefreshButton.Content = "Updating, Please Wait";
             GetSettings();
             ReportTitle.Text = situationReport.FactionName + " Situation Report";
@@ -85,7 +89,16 @@ namespace BGSBuddy
             situationReport.ControlledReports.Clear();
             situationReport.PartialReports.Clear();
 
-            situationReport = await situationReportsService.GenerateReport(situationReport);
+            try
+            {
+                situationReport = await situationReportsService.GenerateReport(situationReport);
+            }
+            catch (Exception ex)
+            {
+                ErrorBanner.Visibility = Visibility.Visible;
+                ErrorBanner.Text = "An error has occurred, try again later. (" + ex.Message + ")";
+                RefreshButton.Content = "Refresh";
+            }
 
             CriticalGrid.DataContext = situationReport.CriticalReports;
             if (!situationReport.CriticalReports.Any())

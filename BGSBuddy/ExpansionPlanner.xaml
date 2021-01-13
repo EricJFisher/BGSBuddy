@@ -6,22 +6,24 @@
       xmlns:local="clr-namespace:BGSBuddy"
       mc:Ignorable="d"
       Title="ExpansionPlanner" Height="450" Width="800">
-    <StackPanel Background="#222222">
-        <StackPanel.Resources>
-            <Style TargetType="{x:Type TextBlock}">
-                <Setter Property="Foreground" Value="#FFFFFF"/>
-            </Style>
-        </StackPanel.Resources>
-        <TextBlock x:Name="ReportTitle" Text="" FontSize="24" Visibility="Collapsed"/>
-        <TextBlock x:Name="ErrorBanner" Text="" FontSize="18" Visibility="Collapsed" Background="Orange" Foreground="DarkRed"/>
-        <TextBlock Text="System to Expand From:"/>
-        <TextBox x:Name="SystemNameTextBox" />
-        <Button x:Name="RefreshButton" Click="RefreshButton_Click">Get Report</Button>
-        <TextBlock x:Name="SpaceAvailableTitle" Text="Space available" Background="Tan" Foreground="Black" FontSize="16"/>
-        <DataGrid x:Name="SpaceAvailableGrid" ItemsSource="{Binding}" AutoGeneratingColumn="Override_AutoGeneratingColumn">
-        </DataGrid>
-        <TextBlock x:Name="InvasionTargetTitle" Text="Invasion targets" Background="Yellow" Foreground="Black" FontSize="16"/>
-        <DataGrid x:Name="InvasionTargetGrid" ItemsSource="{Binding}" AutoGeneratingColumn="Override_AutoGeneratingColumn">
-        </DataGrid>
-    </StackPanel>
+    <ScrollViewer>
+        <StackPanel Background="#222222">
+            <StackPanel.Resources>
+                <Style TargetType="{x:Type TextBlock}">
+                    <Setter Property="Foreground" Value="#FFFFFF"/>
+                </Style>
+            </StackPanel.Resources>
+            <TextBlock x:Name="ReportTitle" Text="" FontSize="24" Visibility="Collapsed"/>
+            <TextBlock x:Name="ErrorBanner" Text="" FontSize="18" Visibility="Collapsed" Background="Orange" Foreground="DarkRed"/>
+            <TextBlock Text="System to Expand From:"/>
+            <TextBox x:Name="SystemNameTextBox" />
+            <Button x:Name="RefreshButton" Click="RefreshButton_Click">Get Report</Button>
+            <TextBlock x:Name="SpaceAvailableTitle" Text="Space available" Background="Tan" Foreground="Black" FontSize="16"/>
+            <DataGrid x:Name="SpaceAvailableGrid" ItemsSource="{Binding}" AutoGeneratingColumn="Override_AutoGeneratingColumn">
+            </DataGrid>
+            <TextBlock x:Name="InvasionTargetTitle" Text="Invasion targets" Background="Yellow" Foreground="Black" FontSize="16"/>
+            <DataGrid x:Name="InvasionTargetGrid" ItemsSource="{Binding}" AutoGeneratingColumn="Override_AutoGeneratingColumn">
+            </DataGrid>
+        </StackPanel>
+    </ScrollViewer>
 </Window>

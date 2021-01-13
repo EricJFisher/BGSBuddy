@@ -113,8 +113,8 @@ namespace Services
                     states = system.State;
 
                 // Stale Data
-                if (system.UpdatedOn <= DateTime.UtcNow.AddDays(-2))
-                    situationReport.CriticalReports.Add(new Report(system.Name, "Stale Data", "System info is behind by roughly " + (DateTime.UtcNow - system.UpdatedOn).Days.ToString() + " ticks", states));
+                if (system.UpdatedOn <= tick.AddDays(-2))
+                    situationReport.CriticalReports.Add(new Report(system.Name, "Stale Data", "System info is behind by roughly " + (system.UpdatedOn - tick).Days.ToString() + " ticks", states));
                 else if (system.UpdatedOn < tick)
                     situationReport.WarningReports.Add(new Report(system.Name, "Stale Data", "System info is behind by at least 1 tick.", states));
 

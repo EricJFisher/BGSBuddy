@@ -7,36 +7,39 @@
         xmlns:src="clr-namespace:Entities;assembly=Entities"
         mc:Ignorable="d"
         Title="BGSBuddy" Height="450" Width="800">
-    <StackPanel x:Name="MainPanel"  Background="#222222">
-        <StackPanel.Resources>
-            <Style TargetType="{x:Type TextBlock}">
-                <Setter Property="Foreground" Value="#FFFFFF"/>
-            </Style>
-        </StackPanel.Resources>
-        <TextBlock x:Name="ReportTitle" Text="Alliance Rapid-Reaction Corps Situation Report" FontSize="24"/>
-        <TextBlock x:Name="UpdateNotification" HorizontalAlignment="Center" Background="Yellow" Foreground="Black" FontSize="24" Padding="5" Visibility="Collapsed">
+    <ScrollViewer>
+        <StackPanel x:Name="MainPanel"  Background="#222222">
+            <StackPanel.Resources>
+                <Style TargetType="{x:Type TextBlock}">
+                    <Setter Property="Foreground" Value="#FFFFFF"/>
+                </Style>
+            </StackPanel.Resources>
+            <TextBlock x:Name="ReportTitle" Text="Alliance Rapid-Reaction Corps Situation Report" FontSize="24"/>
+            <TextBlock x:Name="UpdateNotification" HorizontalAlignment="Center" Background="Yellow" Foreground="Black" FontSize="24" Padding="5" Visibility="Collapsed">
             Update Available:  
             <Hyperlink NavigateUri="https://github.com/EricJFisher/BGSBuddy/releases/latest" RequestNavigate="Hyperlink_RequestNavigate">
                 Click here to view release details in your browser
             </Hyperlink>
-        </TextBlock>
-        <Button x:Name="SettingsButton" Click="SettingsButton_Click">Settings</Button>
-        <Button x:Name="RefreshButton" Click="RefreshButton_Click">Refresh</Button>
-        <Button x:Name="ExpansionButton" Click="ExpansionButton_OnClick">Expansion Planner</Button>
-        <TextBlock x:Name="CriticalTitle" Text="Critical" Background="OrangeRed" Foreground="Black" FontSize="16"/>
-        <DataGrid x:Name="CriticalGrid" ItemsSource="{Binding}" AutoGenerateColumns="True">
-        </DataGrid>
-        <TextBlock x:Name="WarningTitle" Text="Warning" Background="Orange" Foreground="Black" FontSize="16"/>
-        <DataGrid x:Name="WarningGrid" ItemsSource="{Binding}" AutoGenerateColumns="True">
-        </DataGrid>
-        <TextBlock x:Name="OpportunitiesTitle" Text="Opportunities" Background="DeepSkyBlue" Foreground="Black" FontSize="16"/>
-        <DataGrid x:Name="OpportunitiesGrid" ItemsSource="{Binding}" AutoGenerateColumns="True">
-        </DataGrid>
-        <TextBlock x:Name="ControlledTitle" Text="Controlled Systems" Background="Green" FontSize="16" />
-        <DataGrid x:Name="ControlledGrid" ItemsSource="{Binding}" AutoGenerateColumns="True">
-        </DataGrid>
-        <TextBlock x:Name="PartialTitle" Text="Partially Controlled Systems" Background="Tan" Foreground="Black" FontSize="16" />
-        <DataGrid x:Name="PartialGrid" ItemsSource="{Binding}" AutoGenerateColumns="True">
-        </DataGrid>
-    </StackPanel>
+            </TextBlock>
+            <TextBlock x:Name="ErrorBanner" Text="" FontSize="18" Visibility="Collapsed" Background="Orange" Foreground="DarkRed"/>
+            <Button x:Name="SettingsButton" Click="SettingsButton_Click">Settings</Button>
+            <Button x:Name="RefreshButton" Click="RefreshButton_Click">Refresh</Button>
+            <Button x:Name="ExpansionButton" Click="ExpansionButton_OnClick">Expansion Planner</Button>
+            <TextBlock x:Name="CriticalTitle" Text="Critical" Background="OrangeRed" Foreground="Black" FontSize="16"/>
+            <DataGrid x:Name="CriticalGrid" ItemsSource="{Binding}" AutoGenerateColumns="True">
+            </DataGrid>
+            <TextBlock x:Name="WarningTitle" Text="Warning" Background="Orange" Foreground="Black" FontSize="16"/>
+            <DataGrid x:Name="WarningGrid" ItemsSource="{Binding}" AutoGenerateColumns="True">
+            </DataGrid>
+            <TextBlock x:Name="OpportunitiesTitle" Text="Opportunities" Background="DeepSkyBlue" Foreground="Black" FontSize="16"/>
+            <DataGrid x:Name="OpportunitiesGrid" ItemsSource="{Binding}" AutoGenerateColumns="True">
+            </DataGrid>
+            <TextBlock x:Name="ControlledTitle" Text="Controlled Systems" Background="Green" FontSize="16" />
+            <DataGrid x:Name="ControlledGrid" ItemsSource="{Binding}" AutoGenerateColumns="True">
+            </DataGrid>
+            <TextBlock x:Name="PartialTitle" Text="Partially Controlled Systems" Background="Tan" Foreground="Black" FontSize="16" />
+            <DataGrid x:Name="PartialGrid" ItemsSource="{Binding}" AutoGenerateColumns="True">
+            </DataGrid>
+        </StackPanel>
+    </ScrollViewer>
 </Window>
