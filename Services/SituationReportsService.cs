@@ -114,7 +114,7 @@ namespace Services
 
                 // Stale Data
                 if (system.UpdatedOn <= tick.AddDays(-2))
-                    situationReport.CriticalReports.Add(new Report(system.Name, "Stale Data", "System info is behind by roughly " + (system.UpdatedOn - tick).Days.ToString() + " ticks", states));
+                    situationReport.CriticalReports.Add(new Report(system.Name, "Stale Data", "System info is behind by roughly " + (tick - system.UpdatedOn).Days.ToString() + " ticks", states));
                 else if (system.UpdatedOn < tick)
                     situationReport.WarningReports.Add(new Report(system.Name, "Stale Data", "System info is behind by at least 1 tick.", states));
 
