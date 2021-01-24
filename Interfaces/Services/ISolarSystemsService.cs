@@ -6,7 +6,7 @@ namespace Interfaces.Services
 {
     public interface ISolarSystemsService
     {
-        Task<SolarSystem> Get(string systemName);
+        Task<List<SolarSystem>> GetByFactionName(string factionName);
         Task<ExpansionReport> GetExpansionTargets(ExpansionReport expansionReport);
     }
 }

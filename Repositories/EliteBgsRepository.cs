@@ -1,7 +1,6 @@
 ﻿using Entities;
 using Interfaces.Repositories;
 using Newtonsoft.Json.Linq;
-using Newtonsoft.Json.Serialization;
 using Repositories.EliteBgsTypes.FactionRequest;
 using Repositories.EliteBgsTypes.StationRequest;
 using Repositories.EliteBgsTypes.SystemRequest;
@@ -10,7 +9,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using System.Web;
 using Faction = Entities.Faction;
@@ -79,6 +77,29 @@ namespace Repositories
             return assets;
         }
 
+        public async Task<List<SolarSystem>> GetSolarSystemByFactionName(string factionName)
+        {
+            var solarSystems = new List<SolarSystem>();
+            // never do more than 10 pages
+            for (int i = 1; i < 10; i++)
+            {
+                var json = await FetchSolarSystemByFactionName(factionName, i);
+                solarSystems.AddRange(await ConvertJsonToListSolarSystem(json));
+
+                // end loop if no additional pages
+                JObject o = JObject.Parse(json);
+                if (string.IsNullOrEmpty((string)o["nextPage"]))
+                    break;
+            }
+            return solarSystems;
+        }
+
+        public async Task<string> FetchSolarSystemByFactionName(string factionName, int page)
+        {
+            var url = baseUrl + "systems?faction=" + HttpUtility.UrlEncode(factionName) + "&factionDetails=true&page=" + page;
+            return await client.GetStringAsync(url).ConfigureAwait(false);
+        }
+
         public async Task<SolarSystem> GetSolarSystem(string systemName)
         {
             // Get Solar System from EliteBGS
@@ -90,7 +111,7 @@ namespace Repositories
 
         private async Task<string> FetchSolarSystem(string name)
         {
-            var url = baseUrl + "systems?name=" + HttpUtility.UrlEncode(name);
+            var url = baseUrl + "systems?name=" + HttpUtility.UrlEncode(name) + "&factionDetails=true";
             return await client.GetStringAsync(url).ConfigureAwait(false);
         }
 
@@ -156,7 +177,7 @@ namespace Repositories
 
         public async Task<string> FetchExpansionTargets(string solarSystem, int page)
         {
-            var url = @"https://elitebgs.app/api/ebgs/v5/systems?referenceSystem=" + HttpUtility.UrlEncode(solarSystem) + "&referenceDistance=20&factionDetails=true&page=" + page;
+            var url = baseUrl + "systems?referenceSystem=" + HttpUtility.UrlEncode(solarSystem) + "&referenceDistance=20&factionDetails=true&page=" + page;
             return await client.GetStringAsync(url).ConfigureAwait(false);
         }
 

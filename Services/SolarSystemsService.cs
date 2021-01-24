@@ -4,6 +4,7 @@ using Interfaces.Repositories;
 using Interfaces.Services;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace Services
 {
@@ -18,9 +19,21 @@ namespace Services
             _eddbRepository = eddbRepository;
         }
 
-        public async Task<SolarSystem> Get(string systemName)
+        public async Task<List<SolarSystem>> GetByFactionName(string factionName)
         {
-            return await _eliteBgsRepository.GetSolarSystem(systemName);
+            var solarSystems = await _eliteBgsRepository.GetSolarSystemByFactionName(factionName);
+            foreach (var system in solarSystems)
+            {
+                var homeFactions = await _eddbRepository.GetHomeFactions(system.Name);
+                foreach (var subFaction in system.SubFactions)
+                {
+                    if (homeFactions.Contains(subFaction.Name, StringComparer.InvariantCultureIgnoreCase))
+                        subFaction.HomeSystem = true;
+                    else
+                        subFaction.HomeSystem = false;
+                }
+            }
+            return solarSystems;
         }
 
         public async Task<ExpansionReport> GetExpansionTargets(ExpansionReport expansionReport)

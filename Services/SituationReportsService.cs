@@ -31,51 +31,13 @@ namespace Services
             if (situationReport.Faction.UpdatedOn < tick)
                 faction = await _factionsService.Get(situationReport.FactionName);
 
-            // Get Each System and it's Assets
-            foreach (var solarSystem in faction.SolarSystems.Where(e => e.UpdatedOn == null || e.UpdatedOn < tick || e.SubFactions.Count < 5).ToList())
-            {
-                // Update system information
-                var temp = await _solarSystemsService.Get(solarSystem.Name);
-                solarSystem.Name = temp.Name;
-                solarSystem.ControllingFaction = temp.ControllingFaction;
-                solarSystem.Conflicts = temp.Conflicts;
-                solarSystem.ActiveStates = temp.ActiveStates;
-                solarSystem.PendingStates = temp.PendingStates;
-                solarSystem.State = temp.State;
-                solarSystem.SubFactions = temp.SubFactions;
-                solarSystem.UpdatedOn = temp.UpdatedOn;
+            faction.SolarSystems = await _solarSystemsService.GetByFactionName(situationReport.FactionName);
 
+            // Get Each System's Assets
+            foreach (var solarSystem in faction.SolarSystems)
+            {
                 // Update system assets
                 solarSystem.Assets = await _assetsService.GetAssets(solarSystem.Name);
-            }
-
-            var factionsRun = new List<string>();
-            // Get Influence for each faction that doesn't have influence / state info
-            foreach (var solarSystem in faction.SolarSystems.ToList())
-            {
-                foreach (var subFaction in solarSystem.SubFactions.Where(e => e.UpdatedOn == null || e.UpdatedOn < tick).ToList())
-                {
-                    if (factionsRun.Contains(subFaction.Name))
-                        continue;
-                    else
-                        factionsRun.Add(subFaction.Name);
-
-                    var tempFaction = await _factionsService.Get(subFaction.Name);
-
-                    foreach (var result in tempFaction.SolarSystems)
-                    {
-                        if (!faction.SolarSystems.Any(e => e.Name == result.Name))
-                            continue;
-
-                        var thisFaction = result.SubFactions.FirstOrDefault(e => e.Name == tempFaction.Name);
-                        var update = faction.SolarSystems.FirstOrDefault(e => e.Name == result.Name).SubFactions.FirstOrDefault(s => s.Name == subFaction.Name);
-                        update.Name = tempFaction.Name;
-                        update.ActiveStates = thisFaction.ActiveStates;
-                        update.PendingStates = thisFaction.PendingStates;
-                        update.Influence = thisFaction.Influence;
-                        update.UpdatedOn = thisFaction.UpdatedOn;
-                    }
-                }
             }
 
             situationReport.Faction = faction;
@@ -157,12 +119,12 @@ namespace Services
                         situationReport.CriticalReports.Add(new Report(system.Name, "Retreat", "We're in retreat!!!", states));
 
                     // Attempt to guess if someone is near retreat who's not a "home" faction
-                    if (subFaction.Name != faction.Name && !subFaction.Name.Contains(system.Name, StringComparison.InvariantCultureIgnoreCase) && subFaction.Influence < 0.05 && !subFaction.ActiveStates.Exists(e => e.ToLower() == "retreat"))
+                    if (subFaction.Name != faction.Name && !subFaction.HomeSystem && subFaction.Influence < 0.05 && !subFaction.ActiveStates.Exists(e => e.ToLower() == "retreat") && !subFaction.PendingStates.Exists(e => e.ToLower() == "retreat"))
                         situationReport.WarningReports.Add(new Report(system.Name, "Retreat Risk Warning", subFaction.Name + " is close to retreat", states));
 
                     // Other faction is in retreat
-                    if (subFaction.Name != faction.Name && subFaction.ActiveStates.Exists(e => e.ToLower() == "retreat"))
-                        situationReport.WarningReports.Add(new Report(system.Name, "Retreat Warning", subFaction.Name + " is in retreat.", states));
+                    if (subFaction.Name != faction.Name && !subFaction.HomeSystem && (subFaction.ActiveStates.Exists(e => e.ToLower() == "retreat" || subFaction.PendingStates.Exists(e => e.ToLower() == "retreat"))))
+                        situationReport.CriticalReports.Add(new Report(system.Name, "Retreat Warning", subFaction.Name + " is in retreat.", states));
                 }
             }
 

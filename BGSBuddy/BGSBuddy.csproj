@@ -4,10 +4,11 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>net5.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
-    <Version>1.0.0.20</Version>
+    <Version>1.0.0.21</Version>
     <Authors>Eric J Fisher</Authors>
     <Company />
     <Description>Application that pulls Back Ground Simulation information about a given faction for Elite Dangerous then produces a situtation report to help with BGS planning.</Description>
+    <PackageReleaseNotes>Optimized calls to EliteBGS using it's new v5 API (this significantly reduces the total number of calls required per system, and therefore should improve the time it takes to generate a report)</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
