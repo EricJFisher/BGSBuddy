@@ -31,8 +31,11 @@
             <TextBlock x:Name="WarningTitle" Text="Warning" Background="Orange" Foreground="Black" FontSize="16"/>
             <DataGrid x:Name="WarningGrid" ItemsSource="{Binding}" AutoGenerateColumns="True">
             </DataGrid>
-            <TextBlock x:Name="OpportunitiesTitle" Text="Opportunities" Background="DeepSkyBlue" Foreground="Black" FontSize="16"/>
+            <TextBlock x:Name="OpportunitiesTitle" Text="Opportunities" Background="LightYellow" Foreground="Black" FontSize="16"/>
             <DataGrid x:Name="OpportunitiesGrid" ItemsSource="{Binding}" AutoGenerateColumns="True">
+            </DataGrid>
+            <TextBlock x:Name="DataReportsTitle" Text="Stale Data" Background="LightGray" Foreground="Black" FontSize="16"/>
+            <DataGrid x:Name="DataReportsGrid" ItemsSource="{Binding}" AutoGenerateColumns="true">
             </DataGrid>
             <TextBlock x:Name="ControlledTitle" Text="Controlled Systems" Background="Green" FontSize="16" />
             <DataGrid x:Name="ControlledGrid" ItemsSource="{Binding}" AutoGenerateColumns="True">

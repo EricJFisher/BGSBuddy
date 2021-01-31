@@ -86,6 +86,7 @@ namespace BGSBuddy
             situationReport.CriticalReports.Clear();
             situationReport.WarningReports.Clear();
             situationReport.OpportunityReports.Clear();
+            situationReport.DataReports.Clear();
             situationReport.ControlledReports.Clear();
             situationReport.PartialReports.Clear();
 
@@ -138,6 +139,19 @@ namespace BGSBuddy
                 OpportunitiesGrid.Visibility = Visibility.Visible;
             }
             OpportunitiesGrid.Items.Refresh();
+
+            DataReportsGrid.DataContext = situationReport.DataReports;
+            if (!situationReport.DataReports.Any())
+            {
+                DataReportsTitle.Visibility = Visibility.Collapsed;
+                DataReportsGrid.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                DataReportsTitle.Visibility = Visibility.Visible;
+                DataReportsGrid.Visibility = Visibility.Visible;
+            }
+            DataReportsGrid.Items.Refresh();
 
             ControlledGrid.DataContext = situationReport.ControlledReports;
             if (!situationReport.ControlledReports.Any())

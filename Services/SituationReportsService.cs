@@ -1,7 +1,6 @@
 ﻿using Entities;
 using Interfaces.Services;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -76,9 +75,9 @@ namespace Services
 
                 // Stale Data
                 if (system.UpdatedOn <= tick.AddDays(-2))
-                    situationReport.CriticalReports.Add(new Report(system.Name, "Stale Data", "System info is behind by roughly " + (tick - system.UpdatedOn).Days.ToString() + " ticks", states));
+                    situationReport.DataReports.Add(new Report(system.Name, "Stale Data", "System info is behind by roughly " + (tick - system.UpdatedOn).Days.ToString() + " ticks", states));
                 else if (system.UpdatedOn < tick)
-                    situationReport.WarningReports.Add(new Report(system.Name, "Stale Data", "System info is behind by at least 1 tick.", states));
+                    situationReport.DataReports.Add(new Report(system.Name, "Stale Data", "System info is behind by at least 1 tick.", states));
 
                 // In or Pending Conflict
                 if (inConflict)
@@ -125,6 +124,11 @@ namespace Services
                     // Other faction is in retreat
                     if (subFaction.Name != faction.Name && !subFaction.HomeSystem && (subFaction.ActiveStates.Exists(e => e.ToLower() == "retreat" || subFaction.PendingStates.Exists(e => e.ToLower() == "retreat"))))
                         situationReport.CriticalReports.Add(new Report(system.Name, "Retreat Warning", subFaction.Name + " is in retreat.", states));
+
+
+                    // Non-native faction in conflict
+                    if (!subFaction.HomeSystem && system.Conflicts.Any(e => e.Status == "active" && e.Factions.Any(f => f.FactionName.ToLower() == subFaction.Name.ToLower()))) 
+                        situationReport.WarningReports.Add(new Report(system.Name, "Non-native Conflict Warning", "Non-native faction " + subFaction.Name + " is in active conflict.", states));    
                 }
             }
 

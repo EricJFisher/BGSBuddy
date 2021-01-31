@@ -10,6 +10,7 @@ namespace Entities
         public List<Report> CriticalReports = new List<Report>();
         public List<Report> WarningReports = new List<Report>();
         public List<Report> OpportunityReports = new List<Report>();
+        public List<Report> DataReports = new List<Report>();
         public List<Report> ControlledReports = new List<Report>();
         public List<Report> PartialReports = new List<Report>();
         public List<string> OffLimits { get; set; } = new List<string>();
