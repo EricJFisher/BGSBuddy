@@ -38,9 +38,11 @@ namespace BGSBuddy
             var settings = userSettingsService.Load().Result;
             FactionName.Text = settings.FactionName;
             OffLimits.Text = string.Join(",", settings.OffLimits);
+            NonNativeConflicts.IsChecked = settings.ShowNonNativeConflictReports;
 
             Properties.Settings.Default.Faction = FactionName.Text;
             Properties.Settings.Default.OffLimits = OffLimits.Text;
+            Properties.Settings.Default.ShowNonNativeConflictReports = (bool)NonNativeConflicts.IsChecked;
             Properties.Settings.Default.Save();
         }
 
@@ -49,10 +51,12 @@ namespace BGSBuddy
             var settings = new UserSettings();
             settings.FactionName = FactionName.Text;
             settings.OffLimits = OffLimits.Text.Split(',').ToList();
+            settings.ShowNonNativeConflictReports = (bool)NonNativeConflicts.IsChecked;
             userSettingsService.Save(settings).Wait();
 
             Properties.Settings.Default.Faction = FactionName.Text;
             Properties.Settings.Default.OffLimits = OffLimits.Text;
+            Properties.Settings.Default.ShowNonNativeConflictReports = (bool)NonNativeConflicts.IsChecked;
             Properties.Settings.Default.Save();
 
             this.Close();

@@ -125,9 +125,8 @@ namespace Services
                     if (subFaction.Name != faction.Name && !subFaction.HomeSystem && (subFaction.ActiveStates.Exists(e => e.ToLower() == "retreat" || subFaction.PendingStates.Exists(e => e.ToLower() == "retreat"))))
                         situationReport.CriticalReports.Add(new Report(system.Name, "Retreat Warning", subFaction.Name + " is in retreat.", states));
 
-
                     // Non-native faction in conflict
-                    if (!subFaction.HomeSystem && system.Conflicts.Any(e => e.Status == "active" && e.Factions.Any(f => f.FactionName.ToLower() == subFaction.Name.ToLower()))) 
+                    if (situationReport.ShowNonNativeConflictReports && !subFaction.HomeSystem && system.Conflicts.Any(e => e.Status == "active" && e.Factions.Any(f => f.FactionName.ToLower() == subFaction.Name.ToLower()))) 
                         situationReport.WarningReports.Add(new Report(system.Name, "Non-native Conflict Warning", "Non-native faction " + subFaction.Name + " is in active conflict.", states));    
                 }
             }

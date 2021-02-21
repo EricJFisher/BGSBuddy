@@ -6,6 +6,7 @@ namespace Entities
     public class SituationReport
     {
         public string FactionName { get; set; } = string.Empty;
+        public bool ShowNonNativeConflictReports { get; set; } = false;
         public DateTime LastTick { get; set; } = new DateTime();
         public List<Report> CriticalReports = new List<Report>();
         public List<Report> WarningReports = new List<Report>();

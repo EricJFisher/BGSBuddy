@@ -17,6 +17,8 @@
         <TextBox x:Name="FactionName" />
         <Label>Offlimits list: (note: these should be comma seperated with no spaces before or after them)</Label>
         <TextBox x:Name="OffLimits" />
+        <Label>Reports to display:</Label>
+        <CheckBox x:Name="NonNativeConflicts">Show non-native conflicts</CheckBox>
         <Button x:Name="SaveButton" Click="SaveButton_Click">Save and Close</Button>
     </StackPanel>
 </Window>

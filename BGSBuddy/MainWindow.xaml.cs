@@ -55,6 +55,7 @@ namespace BGSBuddy
             var userSettings =  userSettingsService.Load().Result;
             situationReport.FactionName = userSettings.FactionName;
             situationReport.OffLimits = userSettings.OffLimits;
+            situationReport.ShowNonNativeConflictReports = userSettings.ShowNonNativeConflictReports;
         }
 
         private void CheckForUpdates()

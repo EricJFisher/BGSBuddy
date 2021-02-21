@@ -8,5 +8,8 @@
     <Setting Name="OffLimits" Type="System.String" Scope="User">
       <Value Profile="(Default)">Sol,Lave,Brestla</Value>
     </Setting>
+    <Setting Name="ShowNonNativeConflictReports" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
   </Settings>
 </SettingsFile>
