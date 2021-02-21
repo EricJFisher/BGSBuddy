@@ -11,18 +11,21 @@ Generates a situation report based on the faction entered into the settings whil
 ## Critical Reports
  - Systems where you are in conflict
  - Systems where you are in retreat
- - Systems where data is stale (over 2 ticks old)
 
 ## Warning Reports
  - Systems where you're in danger of triggering conflict that won't gain you any assets (within 10% influence)
- - Systems where data is stale (hasn't been updated since most recent tick)
  - Systems where you're nearing expansion (more than 65% influence)
  - Systems you're nearing retreat (less than 7.5% influence)
+ - Systems you're in where a non-native faction is in conflict (since non-native factions can be retreated)
  
 ## Opportunity Reports
  - Systems where you are near a conflict that can gain you a new asset (within 10% influence)
  - Systems that aren't on your "off limits" list that you aren't the controlling faction
  - Systems where another faction is in retreat
+
+## Stale Data Reports
+ - Systems where data is stale (over 2 ticks old)
+ - Systems where data is stale (hasn't been updated since most recent tick)
 
 ## Controlled Systems
  - Systems you control including all assets present in that system
