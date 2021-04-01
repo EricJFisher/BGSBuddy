@@ -65,6 +65,7 @@ namespace Services
             var expansionSystem = await _eliteBgsRepository.GetSolarSystem(expansionReport.ExpandFromSystem);
             var systems = await _eliteBgsRepository.GetExpansionTargets(expansionReport.ExpandFromSystem);
 
+            var timedOut = false;
             foreach (var system in systems)
             {
                 // skip systems we're already in
@@ -77,13 +78,35 @@ namespace Services
                 }
                 else if(system.SubFactions.Count() == 7)
                 {
-                    var homeFactions = await _eddbRepository.GetHomeFactions(system.Name);
-                    foreach (var subFaction in system.SubFactions)
+                    if (!timedOut)
                     {
-                        if (homeFactions.Contains(subFaction.Name, StringComparer.InvariantCultureIgnoreCase))
-                            subFaction.HomeSystem = true;
-                        else
-                            subFaction.HomeSystem = false;
+                        try
+                        {
+                            var homeFactions = await _eddbRepository.GetHomeFactions(system.Name);
+                            foreach (var subFaction in system.SubFactions)
+                            {
+                                if (homeFactions.Contains(subFaction.Name, StringComparer.InvariantCultureIgnoreCase))
+                                    subFaction.HomeSystem = true;
+                                else
+                                    subFaction.HomeSystem = false;
+                            }
+                        }
+                        catch(HttpRequestException ex)
+                        {
+                            timedOut = true;
+                        }
+                    }
+
+                    if(timedOut)
+                    {
+                        // Fallback to nieve determination when EliteBGS's EDDB API 504s on getting by home system.
+                        foreach (var subFaction in system.SubFactions)
+                        {
+                            if (subFaction.Name.Contains(system.Name, StringComparison.OrdinalIgnoreCase))
+                                subFaction.HomeSystem = true;
+                            else
+                                subFaction.HomeSystem = false;
+                        }
                     }
 
                     if (system.SubFactions.Any(e => !e.HomeSystem && e.Influence < 10))

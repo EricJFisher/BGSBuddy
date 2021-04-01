@@ -4,7 +4,7 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>net5.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
-    <Version>1.0.1.2</Version>
+    <Version>1.0.1.3</Version>
     <Authors>Eric J Fisher</Authors>
     <Company />
     <Description>Application that pulls Back Ground Simulation information about a given faction for Elite Dangerous then produces a situtation report to help with BGS planning.</Description>
