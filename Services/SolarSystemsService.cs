@@ -5,6 +5,7 @@ using Interfaces.Services;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Net.Http;
 
 namespace Services
 {
@@ -22,15 +23,38 @@ namespace Services
         public async Task<List<SolarSystem>> GetByFactionName(string factionName)
         {
             var solarSystems = await _eliteBgsRepository.GetSolarSystemByFactionName(factionName);
+            bool timedout = false;
             foreach (var system in solarSystems)
             {
-                var homeFactions = await _eddbRepository.GetHomeFactions(system.Name);
-                foreach (var subFaction in system.SubFactions)
+                if (!timedout)
                 {
-                    if (homeFactions.Contains(subFaction.Name, StringComparer.InvariantCultureIgnoreCase))
-                        subFaction.HomeSystem = true;
-                    else
-                        subFaction.HomeSystem = false;
+                    try
+                    {
+                        var homeFactions = await _eddbRepository.GetHomeFactions(system.Name);
+                        foreach (var subFaction in system.SubFactions)
+                        {
+                            if (homeFactions.Contains(subFaction.Name, StringComparer.InvariantCultureIgnoreCase))
+                                subFaction.HomeSystem = true;
+                            else
+                                subFaction.HomeSystem = false;
+                        }
+                    }
+                    catch (HttpRequestException ex)
+                    {
+                        timedout = true;
+                    }
+                }
+
+                if (timedout)
+                {
+                    // Fallback to nieve determination when EliteBGS's EDDB API 504s on getting by home system.
+                    foreach (var subFaction in system.SubFactions)
+                    {
+                        if (subFaction.Name.Contains(system.Name, StringComparison.OrdinalIgnoreCase))
+                            subFaction.HomeSystem = true;
+                        else
+                            subFaction.HomeSystem = false;
+                    }
                 }
             }
             return solarSystems;
