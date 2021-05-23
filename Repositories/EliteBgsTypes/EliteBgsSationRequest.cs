@@ -73,7 +73,7 @@ namespace Repositories.EliteBgsTypes.StationRequest
         public DateTimeOffset UpdatedAt { get; set; }
 
         [JsonProperty("eddb_id")]
-        public long EddbId { get; set; }
+        public long? EddbId { get; set; }
 
         [JsonProperty("all_economies")]
         public List<AllEconomy> AllEconomies { get; set; }
