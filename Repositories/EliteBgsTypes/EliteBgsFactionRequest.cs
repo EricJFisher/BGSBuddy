@@ -48,7 +48,7 @@ namespace Repositories.EliteBgsTypes.FactionRequest
         public string Allegiance { get; set; }
 
         [JsonProperty("eddb_id")]
-        public long EddbId { get; set; }
+        public long? EddbId { get; set; }
 
         [JsonProperty("faction_presence")]
         public List<FactionPresence> FactionPresence { get; set; }
